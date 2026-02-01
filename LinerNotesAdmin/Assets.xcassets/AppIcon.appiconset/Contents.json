@@ -2,8 +2,8 @@
   "images" : [
     {
       "idiom" : "universal",
-      "platform" : "macos",
-      "size" : "512x512"
+      "platform" : "ios",
+      "size" : "1024x1024"
     }
   ],
   "info" : {

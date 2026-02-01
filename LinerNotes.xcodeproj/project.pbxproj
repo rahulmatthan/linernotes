@@ -15,6 +15,33 @@
 		A2000003000000000000001 /* AdminContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000004000000000000001 /* AdminContentView.swift */; };
 		A2000005000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000006000000000000001 /* Assets.xcassets */; };
 		A2000007000000000000001 /* ChainLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000008000000000000001 /* ChainLink.swift */; };
+		B79C2A312F214B52001AE71D /* TreasureHunt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A302F214B52001AE71D /* TreasureHunt.swift */; };
+		B79C2A322F214B52001AE71D /* MusicKitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A2F2F214B52001AE71D /* MusicKitModels.swift */; };
+		B79C2A332F214B52001AE71D /* TreasureHunt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A302F214B52001AE71D /* TreasureHunt.swift */; };
+		B79C2A342F214B52001AE71D /* MusicKitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A2F2F214B52001AE71D /* MusicKitModels.swift */; };
+		B79C2A372F214BC7001AE71D /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A352F214BC7001AE71D /* GameState.swift */; };
+		B79C2A3A2F214BEC001AE71D /* MusicKitPlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A382F214BEC001AE71D /* MusicKitPlayerService.swift */; };
+		B79C2A402F214D24001AE71D /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A3E2F214D24001AE71D /* GameViewModel.swift */; };
+		B79C2A462F214D38001AE71D /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A442F214D38001AE71D /* GameView.swift */; };
+		B79C2A472F214D38001AE71D /* GameProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A432F214D38001AE71D /* GameProgressView.swift */; };
+		B79C2A482F214D38001AE71D /* ClueCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A422F214D38001AE71D /* ClueCardView.swift */; };
+		B79C2A492F214D38001AE71D /* AnswerInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A412F214D38001AE71D /* AnswerInputView.swift */; };
+		B79C2A4E2F215048001AE71D /* FuzzyMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A4D2F215048001AE71D /* FuzzyMatcher.swift */; };
+		B79C2A522F2321DC001AE71D /* MusicKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A502F2321DC001AE71D /* MusicKitService.swift */; };
+		B79C2A532F2321DC001AE71D /* FileManager+TreasureHunt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A4F2F2321DC001AE71D /* FileManager+TreasureHunt.swift */; };
+		B79C2A572F2321EC001AE71D /* TreasureHuntViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A552F2321EC001AE71D /* TreasureHuntViewModel.swift */; };
+		B79C2A582F2321EC001AE71D /* MusicSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A542F2321EC001AE71D /* MusicSearchViewModel.swift */; };
+		B79C2A5F2F2321FA001AE71D /* TreasureHuntEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A5D2F2321FA001AE71D /* TreasureHuntEditorView.swift */; };
+		B79C2A602F2321FA001AE71D /* PreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A5C2F2321FA001AE71D /* PreviewSheet.swift */; };
+		B79C2A612F2321FA001AE71D /* ChainLinkEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A592F2321FA001AE71D /* ChainLinkEditorView.swift */; };
+		B79C2A622F2321FA001AE71D /* ChainLinkListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A5A2F2321FA001AE71D /* ChainLinkListItemView.swift */; };
+		B79C2A632F2321FA001AE71D /* MusicSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A5B2F2321FA001AE71D /* MusicSearchSheet.swift */; };
+		B79C2A652F2E6686001AE71D /* HintLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A642F2E6686001AE71D /* HintLevel.swift */; };
+		B79C2A682F2E66AB001AE71D /* HintButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A662F2E66AB001AE71D /* HintButton.swift */; };
+		B79C2A692F2E66AB001AE71D /* HintDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A672F2E66AB001AE71D /* HintDisplayView.swift */; };
+		B79C2A6A2F2E7001001AE71D /* PlaylistRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */; };
+		B79C2A6B2F2F9E9F001AE71D /* NowPlayingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6A2F2F9E9F001AE71D /* NowPlayingBar.swift */; };
+		B79C2A6C2F2E7001001AE71D /* PlaylistTableEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +54,31 @@
 		A2000002000000000000001 /* LinerNotesAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinerNotesAdminApp.swift; sourceTree = "<group>"; };
 		A2000004000000000000001 /* AdminContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminContentView.swift; sourceTree = "<group>"; };
 		A2000006000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B79C2A2F2F214B52001AE71D /* MusicKitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitModels.swift; sourceTree = "<group>"; };
+		B79C2A302F214B52001AE71D /* TreasureHunt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureHunt.swift; sourceTree = "<group>"; };
+		B79C2A352F214BC7001AE71D /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		B79C2A382F214BEC001AE71D /* MusicKitPlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitPlayerService.swift; sourceTree = "<group>"; };
+		B79C2A3E2F214D24001AE71D /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
+		B79C2A412F214D38001AE71D /* AnswerInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnswerInputView.swift; sourceTree = "<group>"; };
+		B79C2A422F214D38001AE71D /* ClueCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClueCardView.swift; sourceTree = "<group>"; };
+		B79C2A432F214D38001AE71D /* GameProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameProgressView.swift; sourceTree = "<group>"; };
+		B79C2A442F214D38001AE71D /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
+		B79C2A4D2F215048001AE71D /* FuzzyMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuzzyMatcher.swift; sourceTree = "<group>"; };
+		B79C2A4F2F2321DC001AE71D /* FileManager+TreasureHunt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+TreasureHunt.swift"; sourceTree = "<group>"; };
+		B79C2A502F2321DC001AE71D /* MusicKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicKitService.swift; sourceTree = "<group>"; };
+		B79C2A542F2321EC001AE71D /* MusicSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSearchViewModel.swift; sourceTree = "<group>"; };
+		B79C2A552F2321EC001AE71D /* TreasureHuntViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureHuntViewModel.swift; sourceTree = "<group>"; };
+		B79C2A592F2321FA001AE71D /* ChainLinkEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainLinkEditorView.swift; sourceTree = "<group>"; };
+		B79C2A5A2F2321FA001AE71D /* ChainLinkListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChainLinkListItemView.swift; sourceTree = "<group>"; };
+		B79C2A5B2F2321FA001AE71D /* MusicSearchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicSearchSheet.swift; sourceTree = "<group>"; };
+		B79C2A5C2F2321FA001AE71D /* PreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSheet.swift; sourceTree = "<group>"; };
+		B79C2A5D2F2321FA001AE71D /* TreasureHuntEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureHuntEditorView.swift; sourceTree = "<group>"; };
+		B79C2A642F2E6686001AE71D /* HintLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintLevel.swift; sourceTree = "<group>"; };
+		B79C2A662F2E66AB001AE71D /* HintButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintButton.swift; sourceTree = "<group>"; };
+		B79C2A672F2E66AB001AE71D /* HintDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintDisplayView.swift; sourceTree = "<group>"; };
+		B79C2A6A2F2F9E9F001AE71D /* NowPlayingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingBar.swift; sourceTree = "<group>"; };
+		B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistRowView.swift; sourceTree = "<group>"; };
+		B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableEditorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +112,12 @@
 		A0000001000000000000001 /* LinerNotesClient */ = {
 			isa = PBXGroup;
 			children = (
+				B79C2A4D2F215048001AE71D /* FuzzyMatcher.swift */,
+				B79C2A4B2F214FD8001AE71D /* Utilities */,
+				B79C2A452F214D38001AE71D /* Views */,
+				B79C2A3F2F214D24001AE71D /* ViewModels */,
+				B79C2A392F214BEC001AE71D /* Services */,
+				B79C2A362F214BC7001AE71D /* Models */,
 				A1000002000000000000001 /* LinerNotesClientApp.swift */,
 				A1000004000000000000001 /* ContentView.swift */,
 				A1000006000000000000001 /* Assets.xcassets */,
@@ -70,6 +128,9 @@
 		A0000002000000000000001 /* LinerNotesAdmin */ = {
 			isa = PBXGroup;
 			children = (
+				B79C2A5E2F2321FA001AE71D /* Views */,
+				B79C2A562F2321EC001AE71D /* ViewModels */,
+				B79C2A512F2321DC001AE71D /* Utilities */,
 				A2000002000000000000001 /* LinerNotesAdminApp.swift */,
 				A2000004000000000000001 /* AdminContentView.swift */,
 				A2000006000000000000001 /* Assets.xcassets */,
@@ -80,6 +141,8 @@
 		A0000003000000000000001 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B79C2A2F2F214B52001AE71D /* MusicKitModels.swift */,
+				B79C2A302F214B52001AE71D /* TreasureHunt.swift */,
 				A1000008000000000000001 /* ChainLink.swift */,
 			);
 			path = Core;
@@ -92,6 +155,84 @@
 				A2000000000000000000001 /* LinerNotesAdmin.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B79C2A362F214BC7001AE71D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A642F2E6686001AE71D /* HintLevel.swift */,
+				B79C2A352F214BC7001AE71D /* GameState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B79C2A392F214BEC001AE71D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A382F214BEC001AE71D /* MusicKitPlayerService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		B79C2A3F2F214D24001AE71D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A3E2F214D24001AE71D /* GameViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B79C2A452F214D38001AE71D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A6A2F2F9E9F001AE71D /* NowPlayingBar.swift */,
+				B79C2A662F2E66AB001AE71D /* HintButton.swift */,
+				B79C2A672F2E66AB001AE71D /* HintDisplayView.swift */,
+				B79C2A412F214D38001AE71D /* AnswerInputView.swift */,
+				B79C2A422F214D38001AE71D /* ClueCardView.swift */,
+				B79C2A432F214D38001AE71D /* GameProgressView.swift */,
+				B79C2A442F214D38001AE71D /* GameView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B79C2A4B2F214FD8001AE71D /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		B79C2A512F2321DC001AE71D /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A4F2F2321DC001AE71D /* FileManager+TreasureHunt.swift */,
+				B79C2A502F2321DC001AE71D /* MusicKitService.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		B79C2A562F2321EC001AE71D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A542F2321EC001AE71D /* MusicSearchViewModel.swift */,
+				B79C2A552F2321EC001AE71D /* TreasureHuntViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B79C2A5E2F2321FA001AE71D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A592F2321FA001AE71D /* ChainLinkEditorView.swift */,
+				B79C2A5A2F2321FA001AE71D /* ChainLinkListItemView.swift */,
+				B79C2A5B2F2321FA001AE71D /* MusicSearchSheet.swift */,
+				B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */,
+				B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */,
+				B79C2A5C2F2321FA001AE71D /* PreviewSheet.swift */,
+				B79C2A5D2F2321FA001AE71D /* TreasureHuntEditorView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,15 +280,13 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					A1200000000000000000001 = {
 						CreatedOnToolsVersion = 15.2;
-						DevelopmentTeam = GAMJ6J6LT3;
 					};
 					A2200000000000000000001 = {
 						CreatedOnToolsVersion = 15.2;
-						DevelopmentTeam = GAMJ6J6LT3;
 					};
 				};
 			};
@@ -195,8 +334,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000003000000000000001 /* ContentView.swift in Sources */,
+				B79C2A652F2E6686001AE71D /* HintLevel.swift in Sources */,
 				A1000007000000000000001 /* ChainLink.swift in Sources */,
 				A1000001000000000000001 /* LinerNotesClientApp.swift in Sources */,
+				B79C2A462F214D38001AE71D /* GameView.swift in Sources */,
+				B79C2A472F214D38001AE71D /* GameProgressView.swift in Sources */,
+				B79C2A4E2F215048001AE71D /* FuzzyMatcher.swift in Sources */,
+				B79C2A482F214D38001AE71D /* ClueCardView.swift in Sources */,
+				B79C2A492F214D38001AE71D /* AnswerInputView.swift in Sources */,
+				B79C2A372F214BC7001AE71D /* GameState.swift in Sources */,
+				B79C2A402F214D24001AE71D /* GameViewModel.swift in Sources */,
+				B79C2A3A2F214BEC001AE71D /* MusicKitPlayerService.swift in Sources */,
+				B79C2A6B2F2F9E9F001AE71D /* NowPlayingBar.swift in Sources */,
+				B79C2A682F2E66AB001AE71D /* HintButton.swift in Sources */,
+				B79C2A692F2E66AB001AE71D /* HintDisplayView.swift in Sources */,
+				B79C2A332F214B52001AE71D /* TreasureHunt.swift in Sources */,
+				B79C2A342F214B52001AE71D /* MusicKitModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,9 +357,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B79C2A5F2F2321FA001AE71D /* TreasureHuntEditorView.swift in Sources */,
+				B79C2A602F2321FA001AE71D /* PreviewSheet.swift in Sources */,
+				B79C2A612F2321FA001AE71D /* ChainLinkEditorView.swift in Sources */,
+				B79C2A622F2321FA001AE71D /* ChainLinkListItemView.swift in Sources */,
+				B79C2A632F2321FA001AE71D /* MusicSearchSheet.swift in Sources */,
+				B79C2A6A2F2E7001001AE71D /* PlaylistRowView.swift in Sources */,
+				B79C2A6C2F2E7001001AE71D /* PlaylistTableEditorView.swift in Sources */,
 				A2000003000000000000001 /* AdminContentView.swift in Sources */,
 				A2000007000000000000001 /* ChainLink.swift in Sources */,
 				A2000001000000000000001 /* LinerNotesAdminApp.swift in Sources */,
+				B79C2A312F214B52001AE71D /* TreasureHunt.swift in Sources */,
+				B79C2A572F2321EC001AE71D /* TreasureHuntViewModel.swift in Sources */,
+				B79C2A582F2321EC001AE71D /* MusicSearchViewModel.swift in Sources */,
+				B79C2A322F214B52001AE71D /* MusicKitModels.swift in Sources */,
+				B79C2A522F2321DC001AE71D /* MusicKitService.swift in Sources */,
+				B79C2A532F2321DC001AE71D /* FileManager+TreasureHunt.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +413,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -269,6 +436,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -308,6 +476,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -323,6 +492,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
@@ -332,25 +502,28 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes needs access to Apple Music to play songs as part of the musical treasure hunt experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.client;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -366,25 +539,28 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes needs access to Apple Music to play songs as part of the musical treasure hunt experience.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.client;
+				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -401,15 +577,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = LinerNotesAdmin/LinerNotesAdmin.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes Admin needs access to Apple Music to search for songs and add them to treasure hunts.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -419,6 +599,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.admin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -430,15 +611,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_ENTITLEMENTS = LinerNotesAdmin/LinerNotesAdmin.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes Admin needs access to Apple Music to search for songs and add them to treasure hunts.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -448,6 +633,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.admin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

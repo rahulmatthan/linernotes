@@ -2,15 +2,83 @@ import Foundation
 import AppKit
 
 extension FileManager {
+    /// The directory where treasure hunt JSON files are stored (also a git repo for GitHub sync)
     static var treasureHuntDirectory: URL {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let treasureHuntURL = documentsURL.appendingPathComponent("LinerNotes/TreasureHunts", isDirectory: true)
+        // Use the linernotes-data git repo in Coding folder
+        let homeURL = FileManager.default.homeDirectoryForCurrentUser
+        let treasureHuntURL = homeURL.appendingPathComponent("Coding/linernotes-data", isDirectory: true)
 
         if !FileManager.default.fileExists(atPath: treasureHuntURL.path) {
             try? FileManager.default.createDirectory(at: treasureHuntURL, withIntermediateDirectories: true)
         }
 
         return treasureHuntURL
+    }
+
+    /// URL for the manifest.json file
+    static var manifestURL: URL {
+        treasureHuntDirectory.appendingPathComponent("manifest.json")
+    }
+
+    // MARK: - Manifest Operations
+
+    /// Load the manifest from disk
+    static func loadManifest() throws -> HuntManifest {
+        let url = manifestURL
+
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            // Return empty manifest if file doesn't exist
+            return .empty
+        }
+
+        let data = try Data(contentsOf: url)
+        let decoder = JSONDecoder()
+        return try decoder.decode(HuntManifest.self, from: data)
+    }
+
+    /// Save the manifest to disk
+    static func saveManifest(_ manifest: HuntManifest) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        let data = try encoder.encode(manifest)
+        try data.write(to: manifestURL)
+    }
+
+    /// Get the expected filename for a hunt based on its manifest entry ID
+    static func huntFileURL(for entryId: String) -> URL {
+        treasureHuntDirectory.appendingPathComponent("\(entryId).json")
+    }
+
+    /// Push changes to GitHub using git
+    static func pushToGitHub() async throws -> String {
+        let repoPath = treasureHuntDirectory.path
+
+        // Run git commands
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/bash")
+        process.arguments = ["-c", """
+            cd "\(repoPath)" && \
+            git add -A && \
+            git commit -m "Update treasure hunt content" && \
+            git push 2>&1 || echo "Already up to date"
+            """]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let output = String(data: data, encoding: .utf8) ?? ""
+
+        if process.terminationStatus != 0 && !output.contains("Already up to date") && !output.contains("nothing to commit") {
+            throw NSError(domain: "GitError", code: Int(process.terminationStatus), userInfo: [NSLocalizedDescriptionKey: output])
+        }
+
+        return output
     }
 
     @MainActor

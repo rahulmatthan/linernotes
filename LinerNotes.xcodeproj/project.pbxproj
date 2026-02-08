@@ -47,6 +47,8 @@
 		B79C2A722F3D0000001AE71D /* HuntManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A732F3D0000001AE71D /* HuntManifest.swift */; };
 		B79C2A742F3D0001001AE71D /* HuntSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A752F3D0001001AE71D /* HuntSelectionViewModel.swift */; };
 		B79C2A762F3D0002001AE71D /* HuntSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A772F3D0002001AE71D /* HuntSelectionView.swift */; };
+		B79C2A782F3D0003001AE71D /* HuntManifestEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A792F3D0003001AE71D /* HuntManifestEntry.swift */; };
+		B79C2A7A2F3D0004001AE71D /* ManifestEntryEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A7B2F3D0004001AE71D /* ManifestEntryEditorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -89,6 +91,8 @@
 		B79C2A732F3D0000001AE71D /* HuntManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntManifest.swift; sourceTree = "<group>"; };
 		B79C2A752F3D0001001AE71D /* HuntSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntSelectionViewModel.swift; sourceTree = "<group>"; };
 		B79C2A772F3D0002001AE71D /* HuntSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntSelectionView.swift; sourceTree = "<group>"; };
+		B79C2A792F3D0003001AE71D /* HuntManifestEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntManifestEntry.swift; sourceTree = "<group>"; };
+		B79C2A7B2F3D0004001AE71D /* ManifestEntryEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestEntryEditorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +142,7 @@
 		A0000002000000000000001 /* LinerNotesAdmin */ = {
 			isa = PBXGroup;
 			children = (
+				B79C2A7C2F3D0005001AE71D /* Models */,
 				B79C2A5E2F2321FA001AE71D /* Views */,
 				B79C2A562F2321EC001AE71D /* ViewModels */,
 				B79C2A512F2321DC001AE71D /* Utilities */,
@@ -241,6 +246,7 @@
 			children = (
 				B79C2A592F2321FA001AE71D /* ChainLinkEditorView.swift */,
 				B79C2A5A2F2321FA001AE71D /* ChainLinkListItemView.swift */,
+				B79C2A7B2F3D0004001AE71D /* ManifestEntryEditorView.swift */,
 				B79C2A5B2F2321FA001AE71D /* MusicSearchSheet.swift */,
 				B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */,
 				B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */,
@@ -248,6 +254,14 @@
 				B79C2A5D2F2321FA001AE71D /* TreasureHuntEditorView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		B79C2A7C2F3D0005001AE71D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B79C2A792F3D0003001AE71D /* HuntManifestEntry.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -393,6 +407,8 @@
 				B79C2A322F214B52001AE71D /* MusicKitModels.swift in Sources */,
 				B79C2A522F2321DC001AE71D /* MusicKitService.swift in Sources */,
 				B79C2A532F2321DC001AE71D /* FileManager+TreasureHunt.swift in Sources */,
+				B79C2A782F3D0003001AE71D /* HuntManifestEntry.swift in Sources */,
+				B79C2A7A2F3D0004001AE71D /* ManifestEntryEditorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

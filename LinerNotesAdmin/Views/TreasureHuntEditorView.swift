@@ -25,6 +25,16 @@ struct TreasureHuntEditorView: View {
                         Text("\(Int(viewModel.currentHunt.completionPercentage))% Complete")
                             .font(.caption)
                             .foregroundColor(viewModel.currentHunt.isComplete ? .green : .secondary)
+
+                        // Manifest status indicator
+                        if viewModel.currentManifestEntry.isValid {
+                            Text("•")
+                                .foregroundColor(.secondary)
+
+                            Label("In Manifest", systemImage: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                        }
                     }
                 }
 
@@ -58,8 +68,31 @@ struct TreasureHuntEditorView: View {
                     .help("Save treasure hunt to file")
                     .disabled(!viewModel.currentHunt.isComplete)
 
+                    Button {
+                        Task {
+                            await viewModel.pushToGitHub()
+                        }
+                    } label: {
+                        if viewModel.isPushing {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                                .frame(width: 16, height: 16)
+                        } else {
+                            Label("Push to GitHub", systemImage: "icloud.and.arrow.up")
+                        }
+                    }
+                    .help("Push changes to GitHub for the app to download")
+                    .disabled(viewModel.isPushing)
+
                     Divider()
                         .frame(height: 20)
+
+                    Button {
+                        viewModel.showingManifestManager = true
+                    } label: {
+                        Label("Manifest", systemImage: "list.bullet.rectangle")
+                    }
+                    .help("View and manage the hunt manifest")
 
                     Button {
                         viewModel.showingPreview = true
@@ -92,10 +125,31 @@ struct TreasureHuntEditorView: View {
         .sheet(isPresented: $editingMetadata) {
             MetadataEditor(hunt: $viewModel.currentHunt)
         }
+        .sheet(isPresented: $viewModel.showingManifestEditor) {
+            ManifestEntryEditorView(
+                entry: $viewModel.currentManifestEntry,
+                huntName: viewModel.currentHunt.name,
+                linkCount: viewModel.currentHunt.links.count,
+                onSave: {
+                    viewModel.onManifestEditorSave()
+                },
+                onCancel: {
+                    viewModel.onManifestEditorCancel()
+                }
+            )
+        }
+        .sheet(isPresented: $viewModel.showingManifestManager) {
+            ManifestManagerView(manifest: $viewModel.manifest)
+        }
         .alert("Error", isPresented: $viewModel.showingError) {
             Button("OK") { }
         } message: {
             Text(viewModel.errorMessage ?? "Unknown error occurred")
+        }
+        .alert("GitHub", isPresented: $viewModel.showingPushSuccess) {
+            Button("OK") { }
+        } message: {
+            Text(viewModel.pushSuccessMessage ?? "Done")
         }
     }
 }

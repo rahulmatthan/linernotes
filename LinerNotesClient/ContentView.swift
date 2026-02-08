@@ -9,6 +9,9 @@ struct ContentView: View {
     @State private var showingError = false
     @State private var errorMessage = ""
     @State private var isLoading = false
+    @State private var savedProgress: SavedProgress?
+    @State private var showingContinueOption = false
+    @State private var pendingHunt: TreasureHunt?
 
     var body: some View {
         ZStack {
@@ -81,12 +84,32 @@ struct ContentView: View {
                 .padding(.bottom, 60)
             }
             .fullScreenCover(item: $selectedHunt) { hunt in
-                GameView(treasureHunt: hunt)
+                GameView(treasureHunt: hunt, savedProgress: savedProgress)
             }
             .alert("Error", isPresented: $showingError) {
                 Button("OK") { }
             } message: {
                 Text(errorMessage)
+            }
+            .alert("Continue Game?", isPresented: $showingContinueOption) {
+                Button("Continue") {
+                    if let hunt = pendingHunt {
+                        selectedHunt = hunt
+                    }
+                    pendingHunt = nil
+                }
+                Button("Start New") {
+                    SavedProgress.clear()
+                    savedProgress = nil
+                    if let hunt = pendingHunt {
+                        selectedHunt = hunt
+                    }
+                    pendingHunt = nil
+                }
+            } message: {
+                if let progress = savedProgress {
+                    Text("You have saved progress at clue \(progress.currentLinkIndex + 1). Would you like to continue or start over?")
+                }
             }
         }
     }
@@ -97,37 +120,63 @@ struct ContentView: View {
         isLoading = true
         defer { isLoading = false }
 
+        var hunt: TreasureHunt?
+
         // 1. Try remote fetch first
-        if let hunt = await fetchRemoteHunt() {
-            print("🟢 Loaded hunt from remote: \(hunt.name) with \(hunt.links.count) links")
-            selectedHunt = hunt
-            return
+        if let remoteHunt = await fetchRemoteHunt() {
+            print("🟢 Loaded hunt from remote: \(remoteHunt.name) with \(remoteHunt.links.count) links")
+            hunt = remoteHunt
         }
 
         // 2. Fall back to cached version
-        if let hunt = loadCachedHunt() {
-            print("🟡 Loaded cached hunt: \(hunt.name) with \(hunt.links.count) links")
-            selectedHunt = hunt
-            return
+        if hunt == nil, let cachedHunt = loadCachedHunt() {
+            print("🟡 Loaded cached hunt: \(cachedHunt.name) with \(cachedHunt.links.count) links")
+            hunt = cachedHunt
         }
 
         // 3. Fall back to bundled version
-        if let hunt = loadBundledHunt() {
-            print("🟠 Loaded bundled hunt: \(hunt.name) with \(hunt.links.count) links")
-            selectedHunt = hunt
-            return
+        if hunt == nil, let bundledHunt = loadBundledHunt() {
+            print("🟠 Loaded bundled hunt: \(bundledHunt.name) with \(bundledHunt.links.count) links")
+            hunt = bundledHunt
         }
 
         // 4. Last resort: demo hunt
-        print("🔴 Using fallback demo hunt")
-        selectedHunt = createDemoHunt()
+        if hunt == nil {
+            print("🔴 Using fallback demo hunt")
+            hunt = createDemoHunt()
+        }
+
+        guard let loadedHunt = hunt else { return }
+
+        // Check for saved progress
+        if let progress = SavedProgress.load() {
+            if progress.matches(hunt: loadedHunt) {
+                // Saved progress matches this hunt - offer to continue
+                savedProgress = progress
+                pendingHunt = loadedHunt
+                showingContinueOption = true
+            } else {
+                // Hunt version changed - clear old progress and start fresh
+                print("⚠️ Hunt version changed, clearing old progress")
+                SavedProgress.clear()
+                savedProgress = nil
+                selectedHunt = loadedHunt
+            }
+        } else {
+            // No saved progress - start fresh
+            selectedHunt = loadedHunt
+        }
     }
 
     private func fetchRemoteHunt() async -> TreasureHunt? {
         guard let url = URL(string: remoteHuntURL) else { return nil }
 
         do {
-            let (data, response) = try await URLSession.shared.data(from: url)
+            // Use cache policy to always fetch fresh data from server
+            var request = URLRequest(url: url)
+            request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+
+            let (data, response) = try await URLSession.shared.data(for: request)
 
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
@@ -203,30 +252,27 @@ struct ContentView: View {
         let demoLinks = [
             ChainLink(
                 clue: "This Canadian artist's 2020 hit about nighttime driving became one of the biggest songs of the decade with its retro 80s synth sound.",
-                hint1: "He can't feel his face when he's with you",
-                hint2: "The song title refers to bright lights that blind",
+                hint1: "He can't feel his face when he's with you. The song title refers to bright lights that blind.",
                 multipleChoiceOptions: ["The Weeknd", "Drake", "Justin Bieber", "Post Malone"],
                 correctAnswers: ["The Weeknd", "the weeknd", "Weeknd", "weeknd"],
                 isrc: "USUG12000523",
-                songInfoText: "Blinding Lights spent 90 weeks in the Billboard Hot 100 top 10."
+                answerText: "Blinding Lights spent 90 weeks in the Billboard Hot 100 top 10."
             ),
             ChainLink(
                 clue: "This British singer-songwriter's 2017 hit about attraction became the most-streamed song of that year.",
-                hint1: "He's thinking out loud about your body",
-                hint2: "The song is about the shape of someone",
+                hint1: "He's thinking out loud about your body. The song is about the shape of someone.",
                 multipleChoiceOptions: ["Ed Sheeran", "Sam Smith", "Harry Styles", "Zayn"],
                 correctAnswers: ["Ed Sheeran", "ed sheeran", "Sheeran", "sheeran"],
                 isrc: "GBAHS1600463",
-                songInfoText: "Shape of You was the first song to reach 3 billion streams on Spotify."
+                answerText: "Shape of You was the first song to reach 3 billion streams on Spotify."
             ),
             ChainLink(
                 clue: "This 2014 collaboration features a Hawaiian singer telling you not to believe him when he says he's too hot.",
-                hint1: "Saturday night and we're in the spot",
-                hint2: "The funk is definitely uptown",
+                hint1: "Saturday night and we're in the spot. The funk is definitely uptown.",
                 multipleChoiceOptions: ["Bruno Mars", "Pharrell Williams", "Justin Timberlake", "Usher"],
                 correctAnswers: ["Bruno Mars", "bruno mars", "Mark Ronson", "mark ronson"],
                 isrc: "GBARL1401524",
-                songInfoText: "Uptown Funk spent 14 weeks at #1 on the Billboard Hot 100."
+                answerText: "Uptown Funk spent 14 weeks at #1 on the Billboard Hot 100."
             )
         ]
 

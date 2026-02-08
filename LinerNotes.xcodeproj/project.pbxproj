@@ -42,6 +42,8 @@
 		B79C2A6A2F2E7001001AE71D /* PlaylistRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */; };
 		B79C2A6B2F2F9E9F001AE71D /* NowPlayingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6A2F2F9E9F001AE71D /* NowPlayingBar.swift */; };
 		B79C2A6C2F2E7001001AE71D /* PlaylistTableEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */; };
+		B79C2A6E2F2F9EAF001AE71D /* SavedProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */; };
+		B79C2A702F2F9EB0001AE71D /* PlaylistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A712F2F9EB0001AE71D /* PlaylistService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +81,8 @@
 		B79C2A6A2F2F9E9F001AE71D /* NowPlayingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingBar.swift; sourceTree = "<group>"; };
 		B79C2A6B2F2E7001001AE71D /* PlaylistRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistRowView.swift; sourceTree = "<group>"; };
 		B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableEditorView.swift; sourceTree = "<group>"; };
+		B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedProgress.swift; sourceTree = "<group>"; };
+		B79C2A712F2F9EB0001AE71D /* PlaylistService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -162,6 +166,7 @@
 			children = (
 				B79C2A642F2E6686001AE71D /* HintLevel.swift */,
 				B79C2A352F214BC7001AE71D /* GameState.swift */,
+				B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -170,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				B79C2A382F214BEC001AE71D /* MusicKitPlayerService.swift */,
+				B79C2A712F2F9EB0001AE71D /* PlaylistService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -350,6 +356,8 @@
 				B79C2A692F2E66AB001AE71D /* HintDisplayView.swift in Sources */,
 				B79C2A332F214B52001AE71D /* TreasureHunt.swift in Sources */,
 				B79C2A342F214B52001AE71D /* MusicKitModels.swift in Sources */,
+				B79C2A6E2F2F9EAF001AE71D /* SavedProgress.swift in Sources */,
+				B79C2A702F2F9EB0001AE71D /* PlaylistService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,7 +549,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_PREVIEWS = YES;
@@ -582,13 +590,15 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Liner Notes";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.trivia-games";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes Admin needs access to Apple Music to search for songs and add them to treasure hunts.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -596,7 +606,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.admin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -616,13 +626,15 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = GAMJ6J6LT3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Liner Notes";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.trivia-games";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "LinerNotes Admin needs access to Apple Music to search for songs and add them to treasure hunts.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -630,7 +642,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.linernotes.admin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

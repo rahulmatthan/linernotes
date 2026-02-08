@@ -12,16 +12,26 @@ class GameViewModel: ObservableObject {
     @Published var showingHint: Bool = false
     @Published var isCheckingAnswer: Bool = false
 
-    // Hint system
+    // Onboarding
+    @Published var showingOnboarding: Bool = true
+    @Published var onboardingPhase: Int = 0  // 0=welcome, 1=instructions, 2=done
+
+    // Hint system - automatic progression
     @Published var hintLevel: HintLevel = .none
-    @Published var hintTimerActive: Bool = false
-    @Published var secondsUntilHint: Int = 60
+    @Published var secondsUntilAutoHint: Int = 45
+    @Published var secondsUntilAutoMC: Int = 15  // Starts after hint1 for first song
+
+    // Track if this is the first song (affects MC timing)
+    @Published var isFirstSong: Bool = true
 
     // Track if we're waiting for queued song to start before showing next clue
     @Published var waitingForNextSong: Bool = false
     @Published var solvedCurrentClue: Bool = false
 
-    // Hard mode - no multiple choice hints
+    // Fade transition
+    @Published var showFadeToBlack: Bool = false
+
+    // Hard mode - no multiple choice hints (moved to settings, kept for compatibility)
     @Published var hardMode: Bool = false
 
     // Playback progress for UI
@@ -32,16 +42,27 @@ class GameViewModel: ObservableObject {
     // Song info display
     @Published var showingCorrectMessage: Bool = false  // "That is correct" text
     @Published var showingSongInfo: Bool = false        // Full info overlay
+    @Published var showingSongStartInfo: Bool = false   // Shown when queued song starts playing
+    @Published var transitionPause: Bool = false        // Hides clue during overlay transitions
     @Published var currentAlbumArtData: Data? = nil
 
     // Solved clue info (stored when answer is correct, shown in info overlay)
     @Published var solvedClueText: String = ""
-    @Published var solvedSongInfoText: String = ""
+    @Published var solvedAnswerText: String = ""
+
+    // Song start info (shown when song starts after being queued)
+    @Published var currentSongStartInfo: String = ""
 
     // Queued song info (waiting for current song to finish)
     private var queuedClueText: String = ""
-    private var queuedSongInfoText: String = ""
+    private var queuedAnswerText: String = ""
+    private var queuedSongStartInfo: String = ""
     private var queuedAlbumArtData: Data? = nil
+
+    // Trivia for display while waiting
+    @Published var queuedTrivia: [String] = []
+    @Published var currentTriviaIndex: Int = 0
+    private var triviaTimer: Timer?
 
     // Completion state - only show after last song finishes
     @Published var showingCompletionScreen: Bool = false
@@ -56,12 +77,33 @@ class GameViewModel: ObservableObject {
     private var songInfoDismissTask: Task<Void, Never>?
 
     private let musicPlayer = MusicKitPlayerService()
-    private var hintTimer: Timer?
+    let playlistService = PlaylistService()
+    private var autoHintTimer: Timer?
+    private var autoMCTimer: Timer?
+    private var songAwareMCTimer: Timer?
     private var songObserver: Task<Void, Never>?
+    private var onboardingTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
-    init(treasureHunt: TreasureHunt) {
+    private var savedProgressToRestore: SavedProgress?
+
+    /// Check if the currently playing song has been added to the playlist
+    var currentSongAddedToPlaylist: Bool {
+        guard let nowPlaying = musicPlayer.nowPlaying else { return false }
+        return playlistService.hasBeenAdded(nowPlaying)
+    }
+
+    /// Add the currently playing song to the playlist
+    func addCurrentSongToPlaylist() async {
+        guard let nowPlaying = musicPlayer.nowPlaying else { return }
+        await playlistService.addSongToPlaylist(nowPlaying)
+    }
+
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil) {
         self.gameState = GameState(treasureHunt: treasureHunt)
+        self.savedProgressToRestore = savedProgress
+        // Always show onboarding on every launch
+        self.showingOnboarding = true
         setupMusicPlayerObservers()
     }
 
@@ -109,55 +151,136 @@ class GameViewModel: ObservableObject {
             return
         }
 
-        // NEW FLOW: No music plays at start, user sees first clue
-        startHintTimer()
+        // Restore saved progress if available
+        if let savedProgress = savedProgressToRestore {
+            restoreProgress(from: savedProgress)
+            savedProgressToRestore = nil
+        }
+
+        // Run onboarding sequence (always shown on every launch)
+        if showingOnboarding {
+            onboardingTask = Task { @MainActor in
+                await runOnboardingSequence()
+            }
+        } else {
+            // Skip to first clue
+            onboardingPhase = 2
+            startAutoHintTimer()
+        }
     }
 
-    private func startHintTimer() {
+    // MARK: - Onboarding
+
+    private func runOnboardingSequence() async {
+        // Phase 0: Welcome screen (5 seconds)
+        onboardingPhase = 0
+        try? await Task.sleep(nanoseconds: 5_000_000_000)
+        guard !Task.isCancelled else { return }
+
+        // Phase 1: Instructions screen (5 seconds) - smooth transition via animation
+        onboardingPhase = 1
+        try? await Task.sleep(nanoseconds: 5_000_000_000)
+        guard !Task.isCancelled else { return }
+
+        // Onboarding complete
+        showingOnboarding = false
+
+        // Phase 2: First clue
+        onboardingPhase = 2
+        startAutoHintTimer()
+    }
+
+    // MARK: - Automatic Hint System
+
+    private func startAutoHintTimer() {
         // Reset hint state
         hintLevel = .none
-        hintTimerActive = false
-        secondsUntilHint = 60
+        secondsUntilAutoHint = 45
+        secondsUntilAutoMC = 15
 
-        // Stop any existing timer
-        hintTimer?.invalidate()
+        // Stop any existing timers
+        stopAllHintTimers()
 
-        print("⏱️ Starting hint timer at \(secondsUntilHint) seconds")
+        print("⏱️ Starting auto hint timer - hint1 in 45 seconds")
 
-        // Start countdown timer
-        hintTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+        // Start countdown timer for hint1
+        autoHintTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
 
             Task { @MainActor in
-                if self.secondsUntilHint > 0 {
-                    self.secondsUntilHint -= 1
-                    if self.secondsUntilHint % 10 == 0 {
-                        print("⏱️ Hint timer: \(self.secondsUntilHint)s remaining")
-                    }
+                if self.secondsUntilAutoHint > 0 {
+                    self.secondsUntilAutoHint -= 1
                 } else {
-                    print("⏱️ Hint timer complete - hints now available!")
-                    self.hintTimerActive = true
-                    self.hintTimer?.invalidate()
-                    self.hintTimer = nil
+                    print("⏱️ Auto hint triggered - showing hint1")
+                    self.hintLevel = .hint1
+                    self.autoHintTimer?.invalidate()
+                    self.autoHintTimer = nil
+
+                    // For first song, start MC timer (15s after hint1 = 30s total)
+                    if self.isFirstSong {
+                        self.startAutoMCTimerForFirstSong()
+                    } else {
+                        // For subsequent songs, MC is tied to song duration
+                        self.startSongAwareMCTimer()
+                    }
                 }
             }
         }
     }
 
-    func requestHint() {
-        guard hintTimerActive else { return }
+    private func startAutoMCTimerForFirstSong() {
+        secondsUntilAutoMC = 15
+        print("⏱️ Starting auto MC timer for first song - MC in 15 seconds")
 
-        switch hintLevel {
-        case .none:
-            hintLevel = .hint1
-        case .hint1:
-            if !hardMode {
-                hintLevel = .multipleChoice  // Skip hint2, go straight to MC
+        autoMCTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+
+            Task { @MainActor in
+                if self.secondsUntilAutoMC > 0 {
+                    self.secondsUntilAutoMC -= 1
+                } else {
+                    print("⏱️ Auto MC triggered - showing multiple choice")
+                    if !self.hardMode {
+                        self.hintLevel = .multipleChoice
+                    }
+                    self.autoMCTimer?.invalidate()
+                    self.autoMCTimer = nil
+                }
             }
-            // In hard mode, hint1 is the max level
-        case .hint2, .multipleChoice:
-            break // Already at max hint level
         }
+    }
+
+    private func startSongAwareMCTimer() {
+        print("⏱️ Starting song-aware MC timer - MC when 10s remain")
+
+        songAwareMCTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+
+            Task { @MainActor in
+                let duration = self.musicPlayer.duration
+                let currentTime = self.musicPlayer.playbackTime
+                let remaining = duration - currentTime
+
+                // Trigger MC when 10 seconds or less remain
+                if duration > 0 && remaining <= 10 && self.hintLevel == .hint1 {
+                    print("⏱️ Song-aware MC triggered - \(Int(remaining))s remaining")
+                    if !self.hardMode {
+                        self.hintLevel = .multipleChoice
+                    }
+                    self.songAwareMCTimer?.invalidate()
+                    self.songAwareMCTimer = nil
+                }
+            }
+        }
+    }
+
+    private func stopAllHintTimers() {
+        autoHintTimer?.invalidate()
+        autoHintTimer = nil
+        autoMCTimer?.invalidate()
+        autoMCTimer = nil
+        songAwareMCTimer?.invalidate()
+        songAwareMCTimer = nil
     }
 
     func toggleHardMode() {
@@ -166,6 +289,18 @@ class GameViewModel: ObservableObject {
         if hardMode && hintLevel == .multipleChoice {
             hintLevel = .hint1
         }
+    }
+
+    /// Skip onboarding and jump to first clue
+    func skipOnboarding() {
+        // Cancel the onboarding sequence task
+        onboardingTask?.cancel()
+        onboardingTask = nil
+
+        // Jump to first clue
+        showingOnboarding = false
+        onboardingPhase = 2
+        startAutoHintTimer()
     }
 
     func selectMultipleChoiceOption(_ option: String) {
@@ -190,7 +325,8 @@ class GameViewModel: ObservableObject {
 
             // Store the solved clue info
             let clueText = currentLink.clue
-            let songInfoText = currentLink.songInfoText ?? ""
+            let answerText = currentLink.answerText ?? ""
+            let songStartInfo = currentLink.songStartInfo ?? ""
             let albumArtData = currentLink.albumArtData
 
             // Check if a song is already playing
@@ -217,36 +353,72 @@ class GameViewModel: ObservableObject {
                 print("❌ Error playing song: \(error)")
             }
 
-            // STEP 4: Wait 5 seconds then fade out "That is correct"
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            showingCorrectMessage = false
-
-            // STEP 5: Show info overlay (or wait for queued song)
+            // STEP 5: Set up next state BEFORE hiding correct message (prevents flash of old clue)
             if songAlreadyPlaying {
-                // Song was queued - wait for it to start before showing info overlay
+                // STEP 4a: Wait 7 seconds for correct message
+                try? await Task.sleep(nanoseconds: 7_000_000_000)
+
+                // Song was queued - set up trivia state first
                 print("🎮 Song queued - waiting for it to start playing")
-                waitingForNextSong = true
                 queuedClueText = clueText
-                queuedSongInfoText = songInfoText
+                queuedAnswerText = answerText
+                queuedSongStartInfo = songStartInfo
                 queuedAlbumArtData = albumArtData
+
+                // Populate trivia from the PREVIOUS song (currently playing), not the queued one
+                populateTriviaFromCurrentlyPlayingSong()
+                startTriviaTimer()
+
+                // Now transition: hide correct message, show trivia (crossfade via animation)
+                waitingForNextSong = true
+                showingCorrectMessage = false
+
                 startObservingQueuedSong()
-                // Screen stays blank (just album art of current song) until queued song starts
             } else {
-                // First song - show info overlay now
-                print("🎮 First song - showing info overlay")
-                solvedClueText = clueText
-                solvedSongInfoText = songInfoText
-                // Album art already set above
-                // Start tracking playback progress for Now Playing bar
+                // STEP 4b: Wait 7 seconds for first song correct message
+                try? await Task.sleep(nanoseconds: 7_000_000_000)
+
+                // First song - show song start info first
+                print("🎮 First song - showing song start info")
                 startPlaybackUITimer()
-                showSongInfoOverlayThenAdvance()
+
+                // Hide correct message, pause 1 second (transitionPause keeps clue hidden)
+                transitionPause = true
+                showingCorrectMessage = false
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+
+                // Transition to song start info (if available)
+                if !songStartInfo.isEmpty {
+                    currentSongStartInfo = songStartInfo
+                    showingSongStartInfo = true
+                    transitionPause = false
+
+                    // Wait 7 seconds for song start info
+                    try? await Task.sleep(nanoseconds: 7_000_000_000)
+
+                    // Hide song start info, pause 1 second before next clue
+                    transitionPause = true
+                    showingSongStartInfo = false
+                    currentSongStartInfo = ""
+                    try? await Task.sleep(nanoseconds: 1_000_000_000)
+                    transitionPause = false
+
+                    // Transition to next clue
+                    advanceToNextClue()
+                } else {
+                    // No song start info - go directly to next clue
+                    transitionPause = false
+                    advanceToNextClue()
+                }
             }
         } else {
-            errorMessage = "That's not quite right. Try again!"
+            // Show error overlay
             showingError = true
-
-            try? await Task.sleep(nanoseconds: 500_000_000)
             currentAnswer = ""
+
+            // Auto-dismiss after 2 seconds
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            showingError = false
         }
     }
 
@@ -263,26 +435,50 @@ class GameViewModel: ObservableObject {
 
                 // If queuedNext is nil and we were waiting, the song started
                 if musicPlayer.queuedNext == nil && waitingForNextSong {
-                    print("🎮 Queued song started playing - showing info overlay")
-                    waitingForNextSong = false
-                    // Don't stop the playback timer - keep tracking progress for Now Playing bar
-                    // Reset progress-related state but keep timer running
+                    print("🎮 Queued song started playing")
+
+                    // Reset progress-related state
                     secondsUntilNextClue = 0
                     isNearEndOfSong = false
 
                     // Update album art to the new song
                     currentAlbumArtData = queuedAlbumArtData
 
-                    // Show info overlay for the song that just started
-                    solvedClueText = queuedClueText
-                    solvedSongInfoText = queuedSongInfoText
+                    // Stop trivia timer
+                    stopTriviaTimer()
+
+                    // Transition: Set next state BEFORE clearing previous (prevents clue flash)
+                    if !queuedSongStartInfo.isEmpty {
+                        // Show song start info - crossfade from trivia
+                        print("🎮 Showing song start info for 7 seconds")
+                        currentSongStartInfo = queuedSongStartInfo
+                        showingSongStartInfo = true
+                        waitingForNextSong = false
+
+                        // Wait 7 seconds for display
+                        try? await Task.sleep(nanoseconds: 7_000_000_000)
+                        if Task.isCancelled { return }
+
+                        // Hide song start info, pause 1 second before next clue
+                        transitionPause = true
+                        showingSongStartInfo = false
+                        currentSongStartInfo = ""
+                        try? await Task.sleep(nanoseconds: 1_000_000_000)
+                        if Task.isCancelled { return }
+                        transitionPause = false
+                    } else {
+                        // No song start info - go directly to next clue
+                        waitingForNextSong = false
+                    }
 
                     // Clear queued info
                     queuedClueText = ""
-                    queuedSongInfoText = ""
+                    queuedAnswerText = ""
+                    queuedSongStartInfo = ""
                     queuedAlbumArtData = nil
 
-                    showSongInfoOverlayThenAdvance()
+                    // Advance to next clue
+                    advanceToNextClue()
                     break
                 }
             }
@@ -321,37 +517,102 @@ class GameViewModel: ObservableObject {
         isNearEndOfSong = waitingForNextSong && secondsUntilNextClue <= 10 && secondsUntilNextClue > 0
     }
 
-    private func advanceToNextClue() {
-        gameState.solveCurrentLink()
-        solvedCurrentClue = false
+    // MARK: - Trivia Display
 
-        if !gameState.isComplete {
-            startHintTimer()
+    /// Populates trivia from the currently playing song (the previous link)
+    /// This is called when a new song is queued, so trivia shows for what's playing now
+    private func populateTriviaFromCurrentlyPlayingSong() {
+        // The currently playing song is from the previous link (currentLinkIndex - 1)
+        // because currentLinkIndex points to the clue the user just solved (queued song)
+        let previousIndex = gameState.currentLinkIndex - 1
+        guard previousIndex >= 0 else {
+            queuedTrivia = []
+            currentTriviaIndex = 0
+            return
+        }
+
+        let previousLink = gameState.treasureHunt.links[previousIndex]
+        // Use the triviaItems array, filtering out empty items
+        queuedTrivia = previousLink.triviaItems.filter { !$0.isEmpty }
+        currentTriviaIndex = 0
+        print("📖 Loaded \(queuedTrivia.count) trivia items for currently playing song (link \(previousIndex + 1))")
+    }
+
+    private func startTriviaTimer() {
+        triviaTimer?.invalidate()
+        guard !queuedTrivia.isEmpty else { return }
+
+        // Cycle through trivia every 10 seconds
+        triviaTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            Task { @MainActor in
+                if !self.queuedTrivia.isEmpty {
+                    self.currentTriviaIndex = (self.currentTriviaIndex + 1) % self.queuedTrivia.count
+                    print("📖 Showing trivia \(self.currentTriviaIndex + 1) of \(self.queuedTrivia.count)")
+                }
+            }
         }
     }
 
-    private func showSongInfoOverlayThenAdvance() {
+    private func stopTriviaTimer() {
+        triviaTimer?.invalidate()
+        triviaTimer = nil
+        queuedTrivia = []
+        currentTriviaIndex = 0
+    }
+
+    private func advanceToNextClue() {
+        gameState.solveCurrentLink()
+        solvedCurrentClue = false
+        isFirstSong = false  // After first song, subsequent songs use song-aware MC timing
+
+        if gameState.isComplete {
+            // Game completed - clear saved progress
+            SavedProgress.clear()
+            print("🏆 Game completed - progress cleared")
+        } else {
+            // Save progress after solving each clue
+            saveProgress()
+            startAutoHintTimer()
+        }
+    }
+
+    // MARK: - Progress Persistence
+
+    /// Save current game progress to UserDefaults
+    func saveProgress() {
+        SavedProgress.save(from: gameState)
+    }
+
+    /// Restore game state from saved progress
+    func restoreProgress(from savedProgress: SavedProgress) {
+        gameState.currentLinkIndex = savedProgress.currentLinkIndex
+        gameState.solvedLinks = Set(savedProgress.solvedLinks)
+        gameState.startTime = savedProgress.startTime
+        gameState.phase = .playing
+        isFirstSong = savedProgress.currentLinkIndex == 0
+        print("🔄 Restored progress to clue \(savedProgress.currentLinkIndex + 1)")
+    }
+
+    private func showSongInfoOverlayThenAdvance(skipShowingSongInfo: Bool = false) {
         // Cancel any existing dismiss task
         songInfoDismissTask?.cancel()
 
-        showingSongInfo = true
+        if !skipShowingSongInfo {
+            showingSongInfo = true
+        }
 
         // Check if this is the last clue
         let isLastClue = gameState.currentLinkIndex == gameState.treasureHunt.links.count - 1
 
-        // Show overlay for 30 seconds, then fade out, wait 5 seconds, then advance to next clue
+        // Show overlay for 7 seconds, then fade out and advance to next clue
         songInfoDismissTask = Task { @MainActor in
-            // Show "That is correct" overlay for 30 seconds
-            try? await Task.sleep(nanoseconds: 30_000_000_000) // 30 seconds
+            // Show song info overlay for 7 seconds
+            try? await Task.sleep(nanoseconds: 7_000_000_000)
             if Task.isCancelled { return }
 
-            // Fade out the overlay
+            // Hide overlay and advance - animations handle the crossfade
             showingSongInfo = false
-
-            // Wait 5 seconds before showing next clue or completion
-            try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
-            if Task.isCancelled { return }
-
             solvedCurrentClue = false
 
             if isLastClue {
@@ -359,7 +620,7 @@ class GameViewModel: ObservableObject {
                 advanceToNextClue() // Mark as complete
                 showingCompletionScreen = true
             } else {
-                // More clues to go
+                // More clues to go - next clue will fade in via animation
                 advanceToNextClue()
             }
         }
@@ -377,13 +638,23 @@ class GameViewModel: ObservableObject {
         try? await musicPlayer.resume()
     }
 
+    /// Skip to the next queued song immediately
+    func skipToNextSong() async {
+        guard waitingForNextSong else { return }
+
+        print("⏭️ User requested skip to next song")
+
+        // Skip the current song in the player
+        await musicPlayer.skipToNext()
+    }
+
     func endGame() {
         musicPlayer.stop()
-        hintTimer?.invalidate()
-        hintTimer = nil
+        stopAllHintTimers()
         songObserver?.cancel()
         songObserver = nil
         stopPlaybackUITimer()
+        stopTriviaTimer()
     }
 
     var progressText: String {
@@ -392,5 +663,10 @@ class GameViewModel: ObservableObject {
 
     var currentLinkNumber: Int {
         gameState.currentLinkIndex + 1
+    }
+
+    var currentTriviaText: String? {
+        guard !queuedTrivia.isEmpty, currentTriviaIndex < queuedTrivia.count else { return nil }
+        return queuedTrivia[currentTriviaIndex]
     }
 }

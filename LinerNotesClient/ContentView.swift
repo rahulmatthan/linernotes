@@ -40,9 +40,6 @@ struct ContentView: View {
     @State private var savedProgress: SavedProgress?
     @State private var selectedHuntFileId: String?
 
-    // Check if user has seen onboarding before
-    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
-
     var body: some View {
         ZStack {
             backgroundGradient
@@ -73,16 +70,15 @@ struct ContentView: View {
                         treasureHunt: hunt,
                         savedProgress: savedProgress,
                         huntFileId: selectedHuntFileId ?? hunt.name,
-                        skipOnboarding: true
+                        skipOnboarding: true,
+                        onClose: {
+                            selectedHunt = nil
+                            savedProgress = nil
+                            selectedHuntFileId = nil
+                            navigationState = .huntSelection
+                        }
                     )
                     .transition(.opacity)
-                    .onDisappear {
-                        // Return to hunt selection when game is dismissed
-                        selectedHunt = nil
-                        savedProgress = nil
-                        selectedHuntFileId = nil
-                        navigationState = .huntSelection
-                    }
                 }
             }
         }
@@ -126,11 +122,7 @@ struct ContentView: View {
             Spacer()
 
             Button {
-                if hasSeenOnboarding {
-                    navigationState = .huntSelection
-                } else {
-                    navigationState = .onboardingWelcome
-                }
+                navigationState = .onboardingWelcome
             } label: {
                 Label("Start", systemImage: "play.fill")
                     .font(.system(size: 20, weight: .bold))
@@ -160,7 +152,6 @@ struct ContentView: View {
 
     private var skipButton: some View {
         Button {
-            hasSeenOnboarding = true
             navigationState = .huntSelection
         } label: {
             Text("Skip")
@@ -254,7 +245,6 @@ struct ContentView: View {
 
                 // Let's Go button
                 Button {
-                    hasSeenOnboarding = true
                     navigationState = .huntSelection
                 } label: {
                     Text("Let's Go")

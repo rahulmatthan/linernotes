@@ -48,20 +48,31 @@ struct GameView: View {
     let savedProgress: SavedProgress?
     let huntFileId: String
     let skipOnboarding: Bool
+    let onClose: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: GameViewModel
 
-    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil, skipOnboarding: Bool = false) {
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil, skipOnboarding: Bool = false, onClose: (() -> Void)? = nil) {
         self.treasureHunt = treasureHunt
         self.savedProgress = savedProgress
         self.huntFileId = huntFileId ?? treasureHunt.name
         self.skipOnboarding = skipOnboarding
+        self.onClose = onClose
         self._viewModel = StateObject(wrappedValue: GameViewModel(
             treasureHunt: treasureHunt,
             savedProgress: savedProgress,
             huntFileId: huntFileId ?? treasureHunt.name,
             skipOnboarding: skipOnboarding
         ))
+    }
+
+    private func closeGame() {
+        viewModel.endGame()
+        if let onClose = onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
     }
 
     var body: some View {
@@ -375,8 +386,7 @@ struct GameView: View {
             Spacer()
 
             Button {
-                viewModel.endGame()
-                dismiss()
+                closeGame()
             } label: {
                 Text("Close")
                     .font(Design.Font.bodyMedium)
@@ -434,8 +444,7 @@ struct GameView: View {
 
     private var closeButton: some View {
         Button {
-            viewModel.endGame()
-            dismiss()
+            closeGame()
         } label: {
             Image(systemName: "xmark")
                 .font(.system(size: 17, weight: .medium))

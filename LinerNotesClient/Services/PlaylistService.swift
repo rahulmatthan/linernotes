@@ -9,16 +9,24 @@ class PlaylistService: ObservableObject {
     @Published private(set) var addedSongIds: Set<String> = []
     @Published var isAddingCurrentSong: Bool = false
 
-    private static let playlistIdKey = "linerNotesPlaylistId"
+    // Current hunt name for playlist naming
+    private var currentHuntName: String = "Liner Notes"
 
     init() {}
+
+    /// Set the current hunt name for playlist naming
+    func setCurrentHunt(name: String) {
+        currentHuntName = name
+        // Reset added songs for new hunt
+        addedSongIds.removeAll()
+    }
 
     /// Check if a song has already been added to the playlist
     func hasBeenAdded(_ song: Song) -> Bool {
         return addedSongIds.contains(song.id.rawValue)
     }
 
-    /// Add a song to the Liner Notes playlist (user-initiated)
+    /// Add a song to the hunt's playlist (user-initiated)
     /// - Parameter song: The MusicKit Song to add
     /// - Returns: true if successful, false otherwise
     @discardableResult
@@ -43,7 +51,7 @@ class PlaylistService: ObservableObject {
             let playlist = try await getOrCreatePlaylist()
             try await addSongToPlaylist(song: song, playlist: playlist)
             addedSongIds.insert(songIdString)
-            print("✅ Added to playlist: \(song.title)")
+            print("✅ Added to playlist '\(currentHuntName)': \(song.title)")
             return true
         } catch {
             print("⚠️ Failed to add to playlist: \(error)")
@@ -60,12 +68,12 @@ class PlaylistService: ObservableObject {
         }
     }
 
-    /// Get existing playlist or create a new one
+    /// Get existing playlist or create a new one for the current hunt
     private func getOrCreatePlaylist() async throws -> Playlist {
-        let playlistName = "Liner Notes"
+        let playlistName = currentHuntName
 
         // Try to find existing playlist by searching library
-        if let savedId = UserDefaults.standard.string(forKey: Self.playlistIdKey) {
+        if let savedId = UserDefaults.standard.string(forKey: playlistIdKey(for: playlistName)) {
             do {
                 let musicItemID = MusicItemID(savedId)
                 var request = MusicLibraryRequest<Playlist>()
@@ -89,10 +97,15 @@ class PlaylistService: ObservableObject {
         )
 
         // Save the playlist ID for future use
-        UserDefaults.standard.set(playlist.id.rawValue, forKey: Self.playlistIdKey)
+        UserDefaults.standard.set(playlist.id.rawValue, forKey: playlistIdKey(for: playlistName))
         print("✅ Created playlist: \(playlist.name) (ID: \(playlist.id.rawValue))")
 
         return playlist
+    }
+
+    /// Generate storage key for a playlist ID
+    private func playlistIdKey(for huntName: String) -> String {
+        "linerNotesPlaylistId_\(huntName)"
     }
 
     /// Add a song to an existing playlist

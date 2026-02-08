@@ -87,6 +87,9 @@ class GameViewModel: ObservableObject {
 
     private var savedProgressToRestore: SavedProgress?
 
+    // Hunt file ID for per-hunt progress storage
+    private let huntFileId: String
+
     /// Check if the currently playing song has been added to the playlist
     var currentSongAddedToPlaylist: Bool {
         guard let nowPlaying = musicPlayer.nowPlaying else { return false }
@@ -99,11 +102,16 @@ class GameViewModel: ObservableObject {
         await playlistService.addSongToPlaylist(nowPlaying)
     }
 
-    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil) {
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil) {
         self.gameState = GameState(treasureHunt: treasureHunt)
         self.savedProgressToRestore = savedProgress
+        self.huntFileId = huntFileId ?? treasureHunt.name
         // Always show onboarding on every launch
         self.showingOnboarding = true
+
+        // Set hunt name for playlist service
+        playlistService.setCurrentHunt(name: treasureHunt.name)
+
         setupMusicPlayerObservers()
     }
 
@@ -568,8 +576,8 @@ class GameViewModel: ObservableObject {
 
         if gameState.isComplete {
             // Game completed - clear saved progress
-            SavedProgress.clear()
-            print("🏆 Game completed - progress cleared")
+            SavedProgress.clear(for: huntFileId)
+            print("🏆 Game completed - progress cleared for '\(huntFileId)'")
         } else {
             // Save progress after solving each clue
             saveProgress()
@@ -581,7 +589,7 @@ class GameViewModel: ObservableObject {
 
     /// Save current game progress to UserDefaults
     func saveProgress() {
-        SavedProgress.save(from: gameState)
+        SavedProgress.save(from: gameState, huntFileId: huntFileId)
     }
 
     /// Restore game state from saved progress
@@ -649,6 +657,11 @@ class GameViewModel: ObservableObject {
     }
 
     func endGame() {
+        // Save progress before closing if game is not complete
+        if !gameState.isComplete {
+            saveProgress()
+        }
+
         musicPlayer.stop()
         stopAllHintTimers()
         songObserver?.cancel()

@@ -7,34 +7,47 @@ struct SavedProgress: Codable {
     let solvedLinks: [Int]
     let startTime: Date?
     let savedAt: Date
+    let isComplete: Bool
+    let totalLinks: Int  // Store total for progress calculation
 
-    private static let userDefaultsKey = "savedGameProgress"
+    // Legacy key for migration
+    private static let legacyUserDefaultsKey = "savedGameProgress"
 
-    /// Save progress to UserDefaults
-    static func save(from gameState: GameState) {
+    // Per-hunt storage key prefix
+    private static let keyPrefix = "savedProgress_"
+
+    /// Generate per-hunt storage key
+    private static func key(for huntFileId: String) -> String {
+        "\(keyPrefix)\(huntFileId)"
+    }
+
+    /// Save progress to UserDefaults for a specific hunt
+    static func save(from gameState: GameState, huntFileId: String) {
         let progress = SavedProgress(
             huntId: gameState.treasureHunt.id,
             huntVersion: gameState.treasureHunt.version,
             currentLinkIndex: gameState.currentLinkIndex,
             solvedLinks: Array(gameState.solvedLinks),
             startTime: gameState.startTime,
-            savedAt: Date()
+            savedAt: Date(),
+            isComplete: gameState.isComplete,
+            totalLinks: gameState.treasureHunt.links.count
         )
 
         do {
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             let data = try encoder.encode(progress)
-            UserDefaults.standard.set(data, forKey: userDefaultsKey)
-            print("💾 Progress saved: link \(progress.currentLinkIndex + 1), \(progress.solvedLinks.count) solved")
+            UserDefaults.standard.set(data, forKey: key(for: huntFileId))
+            print("💾 Progress saved for hunt '\(huntFileId)': link \(progress.currentLinkIndex + 1), \(progress.solvedLinks.count) solved")
         } catch {
             print("⚠️ Failed to save progress: \(error)")
         }
     }
 
-    /// Load saved progress from UserDefaults
-    static func load() -> SavedProgress? {
-        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey) else {
+    /// Load saved progress from UserDefaults for a specific hunt
+    static func load(for huntFileId: String) -> SavedProgress? {
+        guard let data = UserDefaults.standard.data(forKey: key(for: huntFileId)) else {
             return nil
         }
 
@@ -42,7 +55,7 @@ struct SavedProgress: Codable {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let progress = try decoder.decode(SavedProgress.self, from: data)
-            print("📖 Loaded saved progress: link \(progress.currentLinkIndex + 1), \(progress.solvedLinks.count) solved")
+            print("📖 Loaded saved progress for hunt '\(huntFileId)': link \(progress.currentLinkIndex + 1), \(progress.solvedLinks.count) solved")
             return progress
         } catch {
             print("⚠️ Failed to load progress: \(error)")
@@ -50,14 +63,100 @@ struct SavedProgress: Codable {
         }
     }
 
-    /// Clear saved progress from UserDefaults
-    static func clear() {
-        UserDefaults.standard.removeObject(forKey: userDefaultsKey)
-        print("🗑️ Progress cleared")
+    /// Clear saved progress from UserDefaults for a specific hunt
+    static func clear(for huntFileId: String) {
+        UserDefaults.standard.removeObject(forKey: key(for: huntFileId))
+        print("🗑️ Progress cleared for hunt '\(huntFileId)'")
+    }
+
+    /// Get all saved progress entries (for hunt selection display)
+    static func allProgress() -> [String: SavedProgress] {
+        var results: [String: SavedProgress] = [:]
+
+        let defaults = UserDefaults.standard
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        for key in defaults.dictionaryRepresentation().keys {
+            guard key.hasPrefix(keyPrefix) else { continue }
+
+            let huntFileId = String(key.dropFirst(keyPrefix.count))
+            guard let data = defaults.data(forKey: key),
+                  let progress = try? decoder.decode(SavedProgress.self, from: data) else {
+                continue
+            }
+
+            results[huntFileId] = progress
+        }
+
+        return results
+    }
+
+    /// Get hunt status for display
+    func getStatus() -> HuntStatus {
+        if isComplete {
+            return .completed
+        } else if solvedLinks.isEmpty && currentLinkIndex == 0 {
+            return .notStarted
+        } else {
+            let progress = totalLinks > 0 ? Double(solvedLinks.count) / Double(totalLinks) : 0
+            return .inProgress(progress: progress)
+        }
     }
 
     /// Check if saved progress matches the given hunt (same ID and version)
     func matches(hunt: TreasureHunt) -> Bool {
         return huntId == hunt.id && huntVersion == hunt.version
     }
+
+    // MARK: - Legacy Migration
+
+    /// Load legacy saved progress (single-hunt format)
+    static func loadLegacy() -> SavedProgress? {
+        guard let data = UserDefaults.standard.data(forKey: legacyUserDefaultsKey) else {
+            return nil
+        }
+
+        do {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+
+            // Try to decode with new format first
+            if let progress = try? decoder.decode(SavedProgress.self, from: data) {
+                return progress
+            }
+
+            // Fall back to legacy format without isComplete and totalLinks
+            let legacyProgress = try decoder.decode(LegacySavedProgress.self, from: data)
+            return SavedProgress(
+                huntId: legacyProgress.huntId,
+                huntVersion: legacyProgress.huntVersion,
+                currentLinkIndex: legacyProgress.currentLinkIndex,
+                solvedLinks: legacyProgress.solvedLinks,
+                startTime: legacyProgress.startTime,
+                savedAt: legacyProgress.savedAt,
+                isComplete: false,
+                totalLinks: 0
+            )
+        } catch {
+            print("⚠️ Failed to load legacy progress: \(error)")
+            return nil
+        }
+    }
+
+    /// Clear legacy saved progress
+    static func clearLegacy() {
+        UserDefaults.standard.removeObject(forKey: legacyUserDefaultsKey)
+        print("🗑️ Legacy progress cleared")
+    }
+}
+
+/// Legacy format for migration
+private struct LegacySavedProgress: Codable {
+    let huntId: UUID
+    let huntVersion: String
+    let currentLinkIndex: Int
+    let solvedLinks: [Int]
+    let startTime: Date?
+    let savedAt: Date
 }

@@ -46,13 +46,19 @@ private enum Design {
 struct GameView: View {
     let treasureHunt: TreasureHunt
     let savedProgress: SavedProgress?
+    let huntFileId: String
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: GameViewModel
 
-    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil) {
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil) {
         self.treasureHunt = treasureHunt
         self.savedProgress = savedProgress
-        self._viewModel = StateObject(wrappedValue: GameViewModel(treasureHunt: treasureHunt, savedProgress: savedProgress))
+        self.huntFileId = huntFileId ?? treasureHunt.name
+        self._viewModel = StateObject(wrappedValue: GameViewModel(
+            treasureHunt: treasureHunt,
+            savedProgress: savedProgress,
+            huntFileId: huntFileId ?? treasureHunt.name
+        ))
     }
 
     var body: some View {

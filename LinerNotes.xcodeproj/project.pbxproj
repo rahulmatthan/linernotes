@@ -44,6 +44,9 @@
 		B79C2A6C2F2E7001001AE71D /* PlaylistTableEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */; };
 		B79C2A6E2F2F9EAF001AE71D /* SavedProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */; };
 		B79C2A702F2F9EB0001AE71D /* PlaylistService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A712F2F9EB0001AE71D /* PlaylistService.swift */; };
+		B79C2A722F3D0000001AE71D /* HuntManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A732F3D0000001AE71D /* HuntManifest.swift */; };
+		B79C2A742F3D0001001AE71D /* HuntSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A752F3D0001001AE71D /* HuntSelectionViewModel.swift */; };
+		B79C2A762F3D0002001AE71D /* HuntSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79C2A772F3D0002001AE71D /* HuntSelectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +86,9 @@
 		B79C2A6D2F2E7001001AE71D /* PlaylistTableEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTableEditorView.swift; sourceTree = "<group>"; };
 		B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedProgress.swift; sourceTree = "<group>"; };
 		B79C2A712F2F9EB0001AE71D /* PlaylistService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistService.swift; sourceTree = "<group>"; };
+		B79C2A732F3D0000001AE71D /* HuntManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntManifest.swift; sourceTree = "<group>"; };
+		B79C2A752F3D0001001AE71D /* HuntSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntSelectionViewModel.swift; sourceTree = "<group>"; };
+		B79C2A772F3D0002001AE71D /* HuntSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HuntSelectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +173,7 @@
 				B79C2A642F2E6686001AE71D /* HintLevel.swift */,
 				B79C2A352F214BC7001AE71D /* GameState.swift */,
 				B79C2A6F2F2F9EAF001AE71D /* SavedProgress.swift */,
+				B79C2A732F3D0000001AE71D /* HuntManifest.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -184,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				B79C2A3E2F214D24001AE71D /* GameViewModel.swift */,
+				B79C2A752F3D0001001AE71D /* HuntSelectionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -198,6 +206,7 @@
 				B79C2A422F214D38001AE71D /* ClueCardView.swift */,
 				B79C2A432F214D38001AE71D /* GameProgressView.swift */,
 				B79C2A442F214D38001AE71D /* GameView.swift */,
+				B79C2A772F3D0002001AE71D /* HuntSelectionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -358,6 +367,9 @@
 				B79C2A342F214B52001AE71D /* MusicKitModels.swift in Sources */,
 				B79C2A6E2F2F9EAF001AE71D /* SavedProgress.swift in Sources */,
 				B79C2A702F2F9EB0001AE71D /* PlaylistService.swift in Sources */,
+				B79C2A722F3D0000001AE71D /* HuntManifest.swift in Sources */,
+				B79C2A742F3D0001001AE71D /* HuntSelectionViewModel.swift in Sources */,
+				B79C2A762F3D0002001AE71D /* HuntSelectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -102,12 +102,12 @@ class GameViewModel: ObservableObject {
         await playlistService.addSongToPlaylist(nowPlaying)
     }
 
-    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil) {
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil, skipOnboarding: Bool = false) {
         self.gameState = GameState(treasureHunt: treasureHunt)
         self.savedProgressToRestore = savedProgress
         self.huntFileId = huntFileId ?? treasureHunt.name
-        // Always show onboarding on every launch
-        self.showingOnboarding = true
+        // Show onboarding unless explicitly skipped (when handled by ContentView)
+        self.showingOnboarding = !skipOnboarding
 
         // Set hunt name for playlist service
         playlistService.setCurrentHunt(name: treasureHunt.name)

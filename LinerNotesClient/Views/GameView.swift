@@ -47,17 +47,20 @@ struct GameView: View {
     let treasureHunt: TreasureHunt
     let savedProgress: SavedProgress?
     let huntFileId: String
+    let skipOnboarding: Bool
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: GameViewModel
 
-    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil) {
+    init(treasureHunt: TreasureHunt, savedProgress: SavedProgress? = nil, huntFileId: String? = nil, skipOnboarding: Bool = false) {
         self.treasureHunt = treasureHunt
         self.savedProgress = savedProgress
         self.huntFileId = huntFileId ?? treasureHunt.name
+        self.skipOnboarding = skipOnboarding
         self._viewModel = StateObject(wrappedValue: GameViewModel(
             treasureHunt: treasureHunt,
             savedProgress: savedProgress,
-            huntFileId: huntFileId ?? treasureHunt.name
+            huntFileId: huntFileId ?? treasureHunt.name,
+            skipOnboarding: skipOnboarding
         ))
     }
 

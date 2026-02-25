@@ -3,6 +3,12 @@ import SwiftUI
 struct TreasureHuntEditorView: View {
     @StateObject private var viewModel = TreasureHuntViewModel()
     @State private var editingMetadata = false
+    @State private var viewMode: ViewMode = .detail
+
+    private enum ViewMode {
+        case detail
+        case table
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -60,13 +66,16 @@ struct TreasureHuntEditorView: View {
 
                     Button {
                         Task {
-                            await viewModel.saveToFile()
+                            if viewModel.hasValidManifestEntry {
+                                await viewModel.saveToFile()
+                            } else {
+                                await viewModel.saveDraft()
+                            }
                         }
                     } label: {
-                        Label("Save", systemImage: "square.and.arrow.down")
+                        Label(viewModel.hasValidManifestEntry ? "Save" : "Save Draft", systemImage: "square.and.arrow.down")
                     }
-                    .help("Save treasure hunt to file")
-                    .disabled(!viewModel.currentHunt.isComplete)
+                    .help(viewModel.hasValidManifestEntry ? "Save treasure hunt and manifest to file" : "Save a local draft of this treasure hunt")
 
                     Button {
                         Task {
@@ -78,11 +87,21 @@ struct TreasureHuntEditorView: View {
                                 .scaleEffect(0.7)
                                 .frame(width: 16, height: 16)
                         } else {
-                            Label("Push to GitHub", systemImage: "icloud.and.arrow.up")
+                            Label("Publish", systemImage: "icloud.and.arrow.up")
                         }
                     }
-                    .help("Push changes to GitHub for the app to download")
+                    .help("Publish this treasure hunt to GitHub for the app to download")
                     .disabled(viewModel.isPushing)
+
+                    Divider()
+                        .frame(height: 20)
+
+                    Picker("View Mode", selection: $viewMode) {
+                        Text("Detail").tag(ViewMode.detail)
+                        Text("Table").tag(ViewMode.table)
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 200)
 
                     Divider()
                         .frame(height: 20)
@@ -115,11 +134,74 @@ struct TreasureHuntEditorView: View {
 
             Divider()
 
-            // Table editor
-            PlaylistTableEditorView(viewModel: viewModel)
+            // Editor content
+            Group {
+                switch viewMode {
+                case .detail:
+                    HStack(spacing: 0) {
+                        // Sidebar list of links
+                        VStack(spacing: 0) {
+                            ScrollView {
+                                LazyVStack(alignment: .leading, spacing: 4) {
+                                    ForEach(viewModel.currentHunt.links.indices, id: \.self) { index in
+                                        ChainLinkListItemView(
+                                            linkNumber: index + 1,
+                                            link: viewModel.currentHunt.links[index],
+                                            isSelected: viewModel.selectedLinkIndex == index
+                                        )
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            viewModel.selectedLinkIndex = index
+                                        }
+                                    }
+                                }
+                                .padding(8)
+                            }
+
+                            Divider()
+
+                            Button {
+                                viewModel.addNewLink()
+                                viewModel.selectedLinkIndex = max(0, viewModel.currentHunt.links.count - 1)
+                            } label: {
+                                HStack {
+                                    Image(systemName: "plus.circle.fill")
+                                    Text("Add Link")
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .padding(8)
+                        }
+                        .frame(minWidth: 260, maxWidth: 320)
+                        .background(Color(nsColor: .underPageBackgroundColor))
+
+                        Divider()
+
+                        // Detail editor
+                        Group {
+                            if viewModel.currentHunt.links.indices.contains(viewModel.selectedLinkIndex) {
+                                ChainLinkEditorView(viewModel: viewModel)
+                            } else {
+                                VStack {
+                                    Text("Select a link to start editing")
+                                        .font(.title3)
+                                        .foregroundColor(.secondary)
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+                        }
+                    }
+                case .table:
+                    PlaylistTableEditorView(viewModel: viewModel)
+                }
+            }
         }
         .frame(minWidth: 1100, minHeight: 500)
-        .sheet(isPresented: $viewModel.showingPreview) {
+        .sheet(isPresented: $viewModel.showingPreview, onDismiss: {
+            // Ensure we return to the focused detail editor when closing preview
+            viewMode = .detail
+        }) {
             PreviewSheet(hunt: viewModel.currentHunt, selectedLinkIndex: $viewModel.selectedLinkIndex)
         }
         .sheet(isPresented: $editingMetadata) {

@@ -133,6 +133,28 @@ class TreasureHuntViewModel: ObservableObject {
         }
     }
 
+    /// Save a local draft of the current hunt without requiring a valid manifest entry.
+    /// This is useful while authoring content before the hunt is ready to publish.
+    func saveDraft() async {
+        let filename = currentHunt.name
+        let url = FileManager.huntFileURL(for: filename)
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            encoder.dateEncodingStrategy = .iso8601
+
+            let data = try encoder.encode(currentHunt)
+            try data.write(to: url)
+
+            hasUnsavedChanges = false
+            print("💾 Saved draft treasure hunt to: \(url.path)")
+        } catch {
+            errorMessage = "Failed to save draft: \(error.localizedDescription)"
+            showingError = true
+        }
+    }
+
     private func performSave() async {
         // Save manifest entry first
         saveManifestEntry()

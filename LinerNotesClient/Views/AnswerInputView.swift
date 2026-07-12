@@ -17,7 +17,7 @@ struct AnswerInputView: View {
 
             HStack(spacing: 12) {
                 TextField("Who's the artist?", text: $answer)
-                    .font(.system(size: 18, weight: .medium))
+                    .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundColor(.white)
                     .padding()
                     .background(
@@ -43,8 +43,8 @@ struct AnswerInputView: View {
                     showingHint.toggle()
                 } label: {
                     Image(systemName: showingHint ? "lightbulb.fill" : "lightbulb")
-                        .font(.system(size: 20))
-                        .foregroundColor(hint.isEmpty ? .gray : Color(red: 1.0, green: 0.84, blue: 0.0))
+                        .font(.system(size: 20, weight: .regular, design: .rounded))
+                        .foregroundColor(hint.isEmpty ? .gray : Color(red: 1.0, green: 0.42, blue: 0.42))
                         .frame(width: 50, height: 50)
                         .background(
                             Circle()
@@ -63,7 +63,7 @@ struct AnswerInputView: View {
                     onSubmit()
                 } label: {
                     Text("Submit Answer")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
                         .foregroundColor(.black)
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -72,8 +72,8 @@ struct AnswerInputView: View {
                                 .fill(
                                     LinearGradient(
                                         colors: [
-                                            Color(red: 1.0, green: 0.84, blue: 0.0),
-                                            Color(red: 0.9, green: 0.75, blue: 0.0)
+                                            Color(red: 1.0, green: 0.42, blue: 0.42),
+                                            Color(red: 0.93, green: 0.35, blue: 0.35)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -95,14 +95,14 @@ struct AnswerInputView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Image(systemName: "lightbulb.fill")
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.42))
                 Text("Hint")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.42))
             }
 
             Text(hint)
-                .font(.system(size: 16))
+                .font(.system(size: 16, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -110,10 +110,10 @@ struct AnswerInputView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.15))
+                .fill(Color(red: 1.0, green: 0.42, blue: 0.42).opacity(0.15))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.3), lineWidth: 1)
+                        .stroke(Color(red: 1.0, green: 0.42, blue: 0.42).opacity(0.3), lineWidth: 1)
                 )
         )
         .transition(.asymmetric(

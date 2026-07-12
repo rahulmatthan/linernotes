@@ -20,10 +20,24 @@ extension FileManager {
         treasureHuntDirectory.appendingPathComponent("manifest.json")
     }
 
+    /// URL for the admin-only manifest (includes unpublished draft entries)
+    static var adminManifestURL: URL {
+        treasureHuntDirectory.appendingPathComponent("manifest.admin.json")
+    }
+
     // MARK: - Manifest Operations
 
     /// Load the manifest from disk
     static func loadManifest() throws -> HuntManifest {
+        // Prefer admin manifest if present; it preserves published/unpublished state.
+        let adminURL = adminManifestURL
+        if FileManager.default.fileExists(atPath: adminURL.path) {
+            let data = try Data(contentsOf: adminURL)
+            let decoder = JSONDecoder()
+            return try decoder.decode(HuntManifest.self, from: data)
+        }
+
+        // Fallback to published manifest for first-run migration.
         let url = manifestURL
 
         guard FileManager.default.fileExists(atPath: url.path) else {
@@ -41,8 +55,13 @@ extension FileManager {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
-        let data = try encoder.encode(manifest)
-        try data.write(to: manifestURL)
+        // Save full admin manifest (all entries).
+        let adminData = try encoder.encode(manifest)
+        try adminData.write(to: adminManifestURL)
+
+        // Export client-facing manifest (published entries only).
+        let publishedData = try encoder.encode(manifest.publishedOnly)
+        try publishedData.write(to: manifestURL)
     }
 
     /// Get the expected filename for a hunt based on its manifest entry ID

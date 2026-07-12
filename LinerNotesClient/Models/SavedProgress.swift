@@ -9,6 +9,51 @@ struct SavedProgress: Codable {
     let savedAt: Date
     let isComplete: Bool
     let totalLinks: Int  // Store total for progress calculation
+    let inLoopbackPhase: Bool
+    let loopbackSolved: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case huntId, huntVersion, currentLinkIndex, solvedLinks, startTime, savedAt
+        case isComplete, totalLinks, inLoopbackPhase, loopbackSolved
+    }
+
+    init(
+        huntId: UUID,
+        huntVersion: String,
+        currentLinkIndex: Int,
+        solvedLinks: [Int],
+        startTime: Date?,
+        savedAt: Date,
+        isComplete: Bool,
+        totalLinks: Int,
+        inLoopbackPhase: Bool,
+        loopbackSolved: Bool
+    ) {
+        self.huntId = huntId
+        self.huntVersion = huntVersion
+        self.currentLinkIndex = currentLinkIndex
+        self.solvedLinks = solvedLinks
+        self.startTime = startTime
+        self.savedAt = savedAt
+        self.isComplete = isComplete
+        self.totalLinks = totalLinks
+        self.inLoopbackPhase = inLoopbackPhase
+        self.loopbackSolved = loopbackSolved
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        huntId = try container.decode(UUID.self, forKey: .huntId)
+        huntVersion = try container.decode(String.self, forKey: .huntVersion)
+        currentLinkIndex = try container.decode(Int.self, forKey: .currentLinkIndex)
+        solvedLinks = try container.decode([Int].self, forKey: .solvedLinks)
+        startTime = try container.decodeIfPresent(Date.self, forKey: .startTime)
+        savedAt = try container.decode(Date.self, forKey: .savedAt)
+        isComplete = try container.decode(Bool.self, forKey: .isComplete)
+        totalLinks = try container.decode(Int.self, forKey: .totalLinks)
+        inLoopbackPhase = try container.decodeIfPresent(Bool.self, forKey: .inLoopbackPhase) ?? false
+        loopbackSolved = try container.decodeIfPresent(Bool.self, forKey: .loopbackSolved) ?? false
+    }
 
     // Legacy key for migration
     private static let legacyUserDefaultsKey = "savedGameProgress"
@@ -22,7 +67,10 @@ struct SavedProgress: Codable {
     }
 
     /// Save progress to UserDefaults for a specific hunt
-    static func save(from gameState: GameState, huntFileId: String) {
+    static func save(
+        from gameState: GameState,
+        huntFileId: String
+    ) {
         let progress = SavedProgress(
             huntId: gameState.treasureHunt.id,
             huntVersion: gameState.treasureHunt.version,
@@ -31,7 +79,9 @@ struct SavedProgress: Codable {
             startTime: gameState.startTime,
             savedAt: Date(),
             isComplete: gameState.isComplete,
-            totalLinks: gameState.treasureHunt.links.count
+            totalLinks: gameState.treasureHunt.links.count,
+            inLoopbackPhase: false,
+            loopbackSolved: false
         )
 
         do {
@@ -136,7 +186,9 @@ struct SavedProgress: Codable {
                 startTime: legacyProgress.startTime,
                 savedAt: legacyProgress.savedAt,
                 isComplete: false,
-                totalLinks: 0
+                totalLinks: 0,
+                inLoopbackPhase: false,
+                loopbackSolved: false
             )
         } catch {
             print("⚠️ Failed to load legacy progress: \(error)")

@@ -7,6 +7,7 @@ struct HuntManifestEntry: Codable, Identifiable, Equatable {
     var description: String  // Short description for selection screen
     var difficulty: String?  // Optional difficulty level
     var songCount: Int       // Number of clues (auto-calculated from hunt)
+    var isPublished: Bool    // Whether this hunt should appear in client manifest
 
     /// Check if the entry has all required fields filled
     var isValid: Bool {
@@ -18,7 +19,7 @@ struct HuntManifestEntry: Codable, Identifiable, Equatable {
 
     /// Create an empty entry
     static var empty: HuntManifestEntry {
-        HuntManifestEntry(id: "", name: "", description: "", difficulty: nil, songCount: 0)
+        HuntManifestEntry(id: "", name: "", description: "", difficulty: nil, songCount: 0, isPublished: false)
     }
 
     /// Create an entry from a TreasureHunt
@@ -28,8 +29,33 @@ struct HuntManifestEntry: Codable, Identifiable, Equatable {
             name: hunt.name,
             description: hunt.description,
             difficulty: nil,
-            songCount: hunt.links.count
+            songCount: hunt.links.count,
+            isPublished: false
         )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description, difficulty, songCount, isPublished
+    }
+
+    init(id: String, name: String, description: String, difficulty: String?, songCount: Int, isPublished: Bool) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.difficulty = difficulty
+        self.songCount = songCount
+        self.isPublished = isPublished
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        description = try container.decode(String.self, forKey: .description)
+        difficulty = try container.decodeIfPresent(String.self, forKey: .difficulty)
+        songCount = try container.decode(Int.self, forKey: .songCount)
+        // Older manifests won't have this key; treat existing entries as published.
+        isPublished = try container.decodeIfPresent(Bool.self, forKey: .isPublished) ?? true
     }
 }
 
@@ -59,5 +85,9 @@ struct HuntManifest: Codable {
     /// Empty manifest
     static var empty: HuntManifest {
         HuntManifest(hunts: [])
+    }
+
+    var publishedOnly: HuntManifest {
+        HuntManifest(hunts: hunts.filter { $0.isPublished })
     }
 }

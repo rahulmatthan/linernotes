@@ -7,11 +7,15 @@ struct HintDisplayView: View {
     let multipleChoiceOptions: [String]
     let onSelectOption: (String) -> Void
 
+    // Design constants (matching GameView)
+    private let accentColor = Color(red: 1.0, green: 0.42, blue: 0.42)
+    private let secondaryText = Color.white.opacity(0.7)
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Hint (text)
+        VStack(alignment: .leading, spacing: 16) {
+            // Hint text
             if hintLevel.rawValue >= HintLevel.hint1.rawValue && !hint1.isEmpty {
-                hintCard(title: "Hint", text: hint1, icon: "lightbulb.fill")
+                hintCard
             }
 
             // Multiple Choice Options
@@ -19,47 +23,50 @@ struct HintDisplayView: View {
                 multipleChoiceCard
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: hintLevel)
+        .animation(.easeOut(duration: 0.3), value: hintLevel)
     }
 
-    private func hintCard(title: String, text: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+    private var hintCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
-                Text(title)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                Image(systemName: "lightbulb")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundColor(accentColor)
+                Text("HINT")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundColor(accentColor)
+                    .tracking(1)
             }
 
-            Text(text)
-                .font(.system(size: 15))
+            Text(hint1)
+                .font(.system(size: 16, weight: .regular, design: .rounded))
                 .foregroundColor(.white.opacity(0.9))
+                .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
+        .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.1))
+            RoundedRectangle(cornerRadius: 10)
+                .fill(accentColor.opacity(0.08))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.3), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(accentColor.opacity(0.2), lineWidth: 1)
                 )
         )
-        .transition(.scale.combined(with: .opacity))
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
     }
 
     private var multipleChoiceCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 6) {
                 Image(systemName: "list.bullet")
-                    .font(.system(size: 12))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
-                Text("Choose an answer:")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundColor(secondaryText)
+                Text("OR CHOOSE")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundColor(secondaryText)
+                    .tracking(1)
             }
 
             VStack(spacing: 8) {
@@ -68,22 +75,26 @@ struct HintDisplayView: View {
                         Button {
                             onSelectOption(option)
                         } label: {
-                            HStack {
+                            HStack(spacing: 12) {
                                 Text(optionLetter(index))
-                                    .font(.system(size: 14, weight: .bold))
-                                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
-                                    .frame(width: 24)
+                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                    .foregroundColor(accentColor)
+                                    .frame(width: 20)
 
                                 Text(option)
-                                    .font(.system(size: 15))
+                                    .font(.system(size: 16, weight: .regular, design: .rounded))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.white.opacity(0.1))
+                                    .fill(Color.white.opacity(0.08))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
                             )
                         }
                         .buttonStyle(.plain)
@@ -92,16 +103,16 @@ struct HintDisplayView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
+        .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(red: 0.2, green: 0.2, blue: 0.3).opacity(0.8))
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white.opacity(0.05))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(red: 1.0, green: 0.84, blue: 0.0).opacity(0.3), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
         )
-        .transition(.scale.combined(with: .opacity))
+        .transition(.opacity.combined(with: .scale(scale: 0.98)))
     }
 
     private func optionLetter(_ index: Int) -> String {
@@ -122,11 +133,11 @@ private extension Array {
             HintDisplayView(
                 hintLevel: .multipleChoice,
                 hint1: "Think about what blinds you at night",
-                hint2: "He can't feel his face when he's with you",
+                hint2: nil,
                 multipleChoiceOptions: ["The Weeknd", "Drake", "Post Malone", "Justin Bieber"],
                 onSelectOption: { print($0) }
             )
-            .padding()
+            .padding(24)
         }
     }
 }

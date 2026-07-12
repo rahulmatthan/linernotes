@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chain Link Workflow</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <p class="eyebrow">Liner Notes</p>
+        <h1>Chain Link Workflow</h1>
+        <p class="lede">Pick the connection yourself. Let the tool generate the authoring options around it.</p>
+        <div class="status" id="status">Loading session…</div>
+      </aside>
+
+      <main class="main">
+        <section class="panel" id="seed-panel">
+          <div class="panel-head">
+            <div>
+              <p class="step">Step 1</p>
+              <h2>Start Link</h2>
+            </div>
+          </div>
+          <form id="seed-form" class="form-grid">
+            <label>
+              <span>Current song title</span>
+              <input name="currentSongTitle" required />
+            </label>
+            <label>
+              <span>Current artist</span>
+              <input name="currentArtistName" required />
+            </label>
+            <label class="full">
+              <span>Theme notes</span>
+              <textarea name="themeNotes" rows="2" placeholder="Optional era, mood, genre, or audience note"></textarea>
+            </label>
+            <label class="full">
+              <span>Avoid notes</span>
+              <textarea name="avoidNotes" rows="2" placeholder="Optional artists, tropes, or difficulty to avoid"></textarea>
+            </label>
+            <button type="submit" class="primary">Generate connection candidates</button>
+          </form>
+        </section>
+
+        <section class="panel hidden" id="candidate-panel">
+          <div class="panel-head">
+            <div>
+              <p class="step">Step 2</p>
+              <h2>Choose Next Link</h2>
+            </div>
+          </div>
+          <div id="candidate-generation-note" class="candidate-summary"></div>
+          <form id="manual-candidate-form" class="form-grid">
+            <label>
+              <span>Next artist</span>
+              <input name="nextArtistName" required />
+            </label>
+            <label>
+              <span>Next song</span>
+              <input name="nextSongTitle" required />
+            </label>
+            <label class="full">
+              <span>Historical connection fact</span>
+              <textarea name="connectionFact" rows="3" required placeholder="Concrete trivia fact connecting the current artist to the next artist"></textarea>
+            </label>
+            <label>
+              <span>Connection type</span>
+              <input name="connectionType" placeholder="e.g. producer, band-member, name-change" />
+            </label>
+            <label>
+              <span>Confidence</span>
+              <input name="confidence" placeholder="Manual, High, Medium..." />
+            </label>
+            <label class="full">
+              <span>Why this works</span>
+              <textarea name="whyThisWorks" rows="2" placeholder="Optional reasoning for why this is a good next step"></textarea>
+            </label>
+            <label class="full">
+              <span>Verification note</span>
+              <textarea name="verificationNote" rows="2" placeholder="Optional review note"></textarea>
+            </label>
+            <button type="submit" class="ghost">Add manual candidate and continue</button>
+          </form>
+          <div id="candidate-list" class="candidate-list"></div>
+        </section>
+
+        <section class="panel hidden" id="fields-panel">
+          <div class="panel-head">
+            <div>
+              <p class="step">Step 3</p>
+              <h2>Review Authoring Fields</h2>
+            </div>
+          </div>
+          <div id="selected-candidate-summary" class="candidate-summary"></div>
+          <div id="fields-container" class="fields-container"></div>
+        </section>
+
+        <section class="panel hidden" id="export-panel">
+          <div class="panel-head">
+            <div>
+              <p class="step">Step 4</p>
+              <h2>Export Link</h2>
+            </div>
+          </div>
+
+          <form id="export-form" class="form-grid">
+            <label>
+              <span>Song title</span>
+              <input name="songTitle" required />
+            </label>
+            <label>
+              <span>Artist name</span>
+              <input name="artistName" required />
+            </label>
+            <label>
+              <span>ISRC</span>
+              <input name="isrc" required placeholder="Required for app playback" />
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" name="appendToHuntDraft" />
+              <span>Append this approved link to `hunt-draft.json`</span>
+            </label>
+            <button type="submit" class="primary">Validate and export</button>
+          </form>
+          <pre id="export-result" class="output hidden"></pre>
+        </section>
+      </main>
+    </div>
+
+    <template id="field-template">
+      <section class="field-card">
+        <div class="field-head">
+          <div>
+            <h3></h3>
+            <p class="field-help"></p>
+          </div>
+          <div class="actions">
+            <button class="ghost more-options" type="button">More options</button>
+            <button class="ghost manual-toggle" type="button">Enter manually</button>
+          </div>
+        </div>
+        <div class="field-body">
+          <div class="options"></div>
+          <div class="manual hidden"></div>
+        </div>
+      </section>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+  </html>

@@ -2,12 +2,19 @@ import SwiftUI
 
 // MARK: - Design Constants
 private enum Design {
+    enum Mode {
+        // Toggle to quickly revert this visual refresh.
+        static let useRefinedTheme = true
+    }
+
+    // Typography scale - SF Pro Rounded
     enum Font {
-        static let caption = SwiftUI.Font.system(size: 13)
-        static let captionMedium = SwiftUI.Font.system(size: 13, weight: .medium)
-        static let body = SwiftUI.Font.system(size: 16)
-        static let bodyMedium = SwiftUI.Font.system(size: 16, weight: .medium)
-        static let title1 = SwiftUI.Font.system(size: 24, weight: .bold)
+        static let caption = SwiftUI.Font.system(size: 13, weight: .regular, design: .rounded)
+        static let captionMedium = SwiftUI.Font.system(size: 13, weight: .medium, design: .rounded)
+        static let body = SwiftUI.Font.system(size: 17, weight: .regular, design: .default)
+        static let bodyMedium = SwiftUI.Font.system(size: 17, weight: .medium, design: .default)
+        static let title1 = SwiftUI.Font.system(size: 32, weight: .bold, design: .serif)
+        static let display = SwiftUI.Font.system(size: 44, weight: .bold, design: .serif)
     }
 
     enum Spacing {
@@ -20,8 +27,13 @@ private enum Design {
     }
 
     enum Colors {
-        static let accent = Color(red: 1.0, green: 0.84, blue: 0.0)
-        static let secondaryText = Color.white.opacity(0.7)
+        static let accent = Mode.useRefinedTheme
+            ? Color(red: 0.94, green: 0.67, blue: 0.32)
+            : Color(red: 1.0, green: 0.42, blue: 0.42)
+        static let secondaryText = Mode.useRefinedTheme ? Color.white.opacity(0.82) : Color.white.opacity(0.7)
+        static let cardBackground = Mode.useRefinedTheme ? Color.black.opacity(0.58) : Color.clear
+        static let buttonTextOnAccent = Mode.useRefinedTheme ? Color.black.opacity(0.85) : Color.black
+        static let buttonOutline = Mode.useRefinedTheme ? Color.white.opacity(0.26) : accent
     }
 }
 
@@ -31,6 +43,7 @@ struct ContentView: View {
         case splash
         case onboardingWelcome
         case onboardingInstructions
+        case onboardingSelectHunt
         case huntSelection
         case game
     }
@@ -40,9 +53,22 @@ struct ContentView: View {
     @State private var savedProgress: SavedProgress?
     @State private var selectedHuntFileId: String?
 
+    private var brandMark: some View {
+        Image("BrandRecord")
+            .resizable()
+            .scaledToFill()
+            .frame(width: 64, height: 64)
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.35), radius: 8, y: 4)
+    }
+
     var body: some View {
         ZStack {
-            backgroundGradient
+            VinylGrooveBackground()
 
             switch navigationState {
             case .splash:
@@ -51,6 +77,8 @@ struct ContentView: View {
                 onboardingWelcomeScreen
             case .onboardingInstructions:
                 onboardingInstructionsScreen
+            case .onboardingSelectHunt:
+                onboardingSelectHuntScreen
             case .huntSelection:
                 HuntSelectionView(
                     onHuntSelected: { hunt, progress, huntFileId in
@@ -85,19 +113,6 @@ struct ContentView: View {
         .animation(.easeInOut(duration: 0.4), value: navigationState)
     }
 
-    // MARK: - Background
-
-    private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.05, green: 0.05, blue: 0.1),
-                Color(red: 0.1, green: 0.05, blue: 0.15)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
-    }
 
     // MARK: - Splash Screen
 
@@ -106,42 +121,72 @@ struct ContentView: View {
             Spacer()
 
             VStack(spacing: 16) {
-                Image(systemName: "music.note.list")
-                    .font(.system(size: 80))
-                    .foregroundColor(Design.Colors.accent)
+                if Design.Mode.useRefinedTheme {
+                    brandMark
+                } else {
+                    Image(systemName: "music.note.list")
+                        .font(.system(size: 80))
+                        .foregroundColor(Design.Colors.accent)
+                }
 
                 Text("LinerNotes")
-                    .font(.system(size: 42, weight: .bold))
+                    .font(Design.Font.display)
                     .foregroundColor(.white)
 
-                Text("Musical Treasure Hunt")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white.opacity(0.7))
+                Text("A Musical Treasure Hunt")
+                    .font(Design.Font.bodyMedium)
+                    .foregroundColor(Design.Colors.secondaryText)
             }
+            .padding(.horizontal, Design.Spacing.xl)
+            .padding(.vertical, Design.Spacing.xl)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Design.Colors.cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                    )
+            )
 
             Spacer()
 
-            Button {
-                navigationState = .onboardingWelcome
-            } label: {
-                Label("Start", systemImage: "play.fill")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.black)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 18)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Design.Colors.accent,
-                                        Color(red: 0.9, green: 0.75, blue: 0.0)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
+            VStack(spacing: 16) {
+                Button {
+                    navigationState = .onboardingWelcome
+                } label: {
+                    Label("How to Play", systemImage: "questionmark.circle")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Design.Colors.buttonOutline, lineWidth: 1.5)
+                        )
+                }
+
+                Button {
+                    navigationState = .huntSelection
+                } label: {
+                        Label("Start Hunting", systemImage: "play.fill")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundColor(Design.Colors.buttonTextOnAccent)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 18)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [
+                                                Design.Colors.accent,
+                                                Design.Colors.accent.opacity(0.78)
+                                            ],
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                    )
                                 )
-                            )
-                    )
+                        )
+                }
             }
             .padding(.horizontal, 40)
             .padding(.bottom, 60)
@@ -169,20 +214,24 @@ struct ContentView: View {
                 Spacer()
 
                 VStack(spacing: Design.Spacing.xl) {
-                    Image(systemName: "music.note.list")
-                        .font(.system(size: 64, weight: .light))
-                        .foregroundColor(Design.Colors.accent)
+                    if Design.Mode.useRefinedTheme {
+                        brandMark
+                    } else {
+                        Image(systemName: "music.note.list")
+                            .font(.system(size: 64, weight: .light))
+                            .foregroundColor(Design.Colors.accent)
+                    }
 
                     Text("Welcome")
                         .font(Design.Font.title1)
                         .foregroundColor(.white)
                 }
 
-                Text("This is Liner Notes, a curated musical journey where you discover the music trivia that connects songs and artists to each other in unexpected ways")
+                Text("This is Liner Notes, a musical treasure hunt where you have to solve clues one by one to unlock the next song. Each song is linked to the next one and it is up to you to uncover the link")
                     .font(Design.Font.body)
                     .foregroundColor(Design.Colors.secondaryText)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(6)
+                    .lineSpacing(7)
                     .padding(.horizontal, Design.Spacing.xxxl)
 
                 Spacer()
@@ -192,8 +241,8 @@ struct ContentView: View {
                     navigationState = .onboardingInstructions
                 } label: {
                     Text("Next")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black)
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundColor(Design.Colors.buttonTextOnAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(
@@ -234,11 +283,67 @@ struct ContentView: View {
                         .foregroundColor(.white)
                 }
 
-                Text("To start with you will get a clue that you need to solve to unlock the first song. Read the clue and type the answer in the text box to submit it. If you can't solve it you will get hints that will give you more information")
+                Text("To unlock a new song you will need to solve a clue. If you can't figure it out with one clue, after about a minute you will get an additional hint. If the answer still escapes you you will be offered a multiple choice selection. Remember every song is connected to the next either by some common history, or the musicians who made them.")
                     .font(Design.Font.body)
                     .foregroundColor(Design.Colors.secondaryText)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(6)
+                    .lineSpacing(7)
+                    .padding(.horizontal, Design.Spacing.xxxl)
+
+                Spacer()
+
+                // Next button
+                Button {
+                    navigationState = .onboardingSelectHunt
+                } label: {
+                    Text("Next")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundColor(Design.Colors.buttonTextOnAccent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Design.Colors.accent)
+                        )
+                }
+                .padding(.horizontal, 40)
+                .padding(.bottom, 60)
+            }
+
+            // Skip button in top-right corner
+            VStack {
+                HStack {
+                    Spacer()
+                    skipButton
+                }
+                .padding(.horizontal, Design.Spacing.xl)
+                .padding(.top, Design.Spacing.md)
+                Spacer()
+            }
+        }
+        .transition(.opacity)
+    }
+
+    private var onboardingSelectHuntScreen: some View {
+        ZStack {
+            VStack(spacing: Design.Spacing.xxxl) {
+                Spacer()
+
+                VStack(spacing: Design.Spacing.xl) {
+                    Image(systemName: "list.bullet.rectangle")
+                        .font(.system(size: 56, weight: .light))
+                        .foregroundColor(Design.Colors.accent)
+
+                    Text("Select Your Hunt")
+                        .font(Design.Font.title1)
+                        .foregroundColor(.white)
+                }
+
+                Text("On the next screen you will be given the option to select the hunt you want to embark on. As you proceed you can, if you want, add the songs to a playlist or wait till the end and add the entire hunt to the playlist after you have completed your quest")
+                    .font(Design.Font.body)
+                    .foregroundColor(Design.Colors.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(7)
                     .padding(.horizontal, Design.Spacing.xxxl)
 
                 Spacer()
@@ -248,8 +353,8 @@ struct ContentView: View {
                     navigationState = .huntSelection
                 } label: {
                     Text("Let's Go")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.black)
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundColor(Design.Colors.buttonTextOnAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(

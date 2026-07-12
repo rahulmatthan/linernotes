@@ -259,6 +259,9 @@ class TreasureHuntViewModel: ObservableObject {
         isPushing = true
         defer { isPushing = false }
 
+        // Publishing the actively edited hunt should make it visible in the client.
+        currentManifestEntry.isPublished = true
+
         // Save manifest entry and hunt file first
         saveManifestEntry()
 

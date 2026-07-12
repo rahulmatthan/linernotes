@@ -70,14 +70,14 @@ struct ClueCardView: View {
         return VStack(alignment: .leading, spacing: 12) {
             if let firstSentence = sentences.first {
                 Text(firstSentence)
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.42))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             if sentences.count > 1 {
                 Text(sentences.dropFirst().joined(separator: " "))
-                    .font(.system(size: 18, weight: .regular))
+                    .font(.system(size: 18, weight: .regular, design: .rounded))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
             }

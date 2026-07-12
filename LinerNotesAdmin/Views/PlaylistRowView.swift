@@ -6,6 +6,8 @@ struct PlaylistRowView: View {
     let onSearchMusic: () -> Void
     let onDelete: () -> Void
 
+    @State private var showingTriviaPopover = false
+
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             // Row number + delete
@@ -35,23 +37,12 @@ struct PlaylistRowView: View {
                 width: 160
             )
 
-            // Hint 1
+            // Hint
             charLimitedTextEditor(
                 text: $link.hint1,
-                placeholder: "Hint 1",
+                placeholder: "Hint",
                 maxLength: ChainLink.maxHint1Length,
-                width: 130
-            )
-
-            // Hint 2 (optional)
-            charLimitedTextEditor(
-                text: Binding(
-                    get: { link.hint2 ?? "" },
-                    set: { link.hint2 = $0.isEmpty ? nil : $0 }
-                ),
-                placeholder: "Hint 2 (opt)",
-                maxLength: ChainLink.maxHint2Length,
-                width: 130
+                width: 160
             )
 
             // MC Options (2x2 grid)
@@ -99,16 +90,54 @@ struct PlaylistRowView: View {
             }
             .frame(width: 110)
 
-            // Song Info
+            // Answer Text (was Song Info)
             charLimitedTextEditor(
                 text: Binding(
-                    get: { link.songInfoText ?? "" },
-                    set: { link.songInfoText = $0.isEmpty ? nil : $0 }
+                    get: { link.answerText ?? "" },
+                    set: { link.answerText = $0.isEmpty ? nil : $0 }
                 ),
-                placeholder: "Song info (opt)",
-                maxLength: ChainLink.maxSongInfoLength,
-                width: 140
+                placeholder: "Answer text",
+                maxLength: ChainLink.maxAnswerTextLength,
+                width: 120
             )
+
+            // Song Start Info
+            charLimitedTextEditor(
+                text: Binding(
+                    get: { link.songStartInfo ?? "" },
+                    set: { link.songStartInfo = $0.isEmpty ? nil : $0 }
+                ),
+                placeholder: "Song start info",
+                maxLength: ChainLink.maxSongStartInfoLength,
+                width: 120
+            )
+
+            // Trivia (popover for managing array)
+            VStack(spacing: 4) {
+                Button {
+                    showingTriviaPopover.toggle()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "text.bubble")
+                            .font(.system(size: 12))
+                        Text("\(link.triviaItems.filter { !$0.isEmpty }.count)")
+                            .font(.system(size: 11))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.accentColor.opacity(0.1))
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+                .popover(isPresented: $showingTriviaPopover) {
+                    triviaPopoverContent
+                }
+
+                Text("trivia")
+                    .font(.system(size: 9))
+                    .foregroundColor(.secondary)
+            }
+            .frame(width: 60)
 
             // Album Art preview
             if let image = link.albumArtImage {
@@ -145,6 +174,76 @@ struct PlaylistRowView: View {
         .padding(.vertical, 8)
         .padding(.horizontal, 4)
     }
+
+    // MARK: - Trivia Popover
+
+    private var triviaPopoverContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Trivia Items")
+                .font(.headline)
+
+            Text("Shown while player waits for queued song")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            ScrollView {
+                VStack(spacing: 8) {
+                    ForEach(Array(link.triviaItems.enumerated()), id: \.offset) { index, _ in
+                        HStack(alignment: .top, spacing: 8) {
+                            Text("\(index + 1).")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .frame(width: 20)
+
+                            TextEditor(text: Binding(
+                                get: {
+                                    guard index < link.triviaItems.count else { return "" }
+                                    return link.triviaItems[index]
+                                },
+                                set: { newValue in
+                                    guard index < link.triviaItems.count else { return }
+                                    link.triviaItems[index] = newValue
+                                }
+                            ))
+                                .font(.system(size: 11))
+                                .frame(width: 250, height: 50)
+                                .scrollContentBackground(.hidden)
+                                .background(Color(nsColor: .textBackgroundColor))
+                                .cornerRadius(4)
+
+                            Button {
+                                link.triviaItems.remove(at: index)
+                            } label: {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.red)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            .frame(maxHeight: 300)
+
+            if link.triviaItems.count < ChainLink.maxTriviaItems {
+                Button {
+                    link.triviaItems.append("")
+                } label: {
+                    Label("Add Trivia", systemImage: "plus.circle.fill")
+                        .font(.system(size: 12))
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Text("\(link.triviaItems.filter { !$0.isEmpty }.count)/\(ChainLink.maxTriviaItems) items")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .frame(width: 350)
+    }
+
+    // MARK: - Helper Views
 
     private func charLimitedTextEditor(text: Binding<String>, placeholder: String, maxLength: Int, width: CGFloat) -> some View {
         VStack(alignment: .trailing, spacing: 2) {
@@ -222,5 +321,5 @@ struct PlaylistRowView: View {
         onSearchMusic: {},
         onDelete: {}
     )
-    .frame(width: 1100)
+    .frame(width: 1400)
 }

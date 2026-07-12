@@ -118,4 +118,67 @@ class PlaylistService: ObservableObject {
     func clearSession() {
         addedSongIds.removeAll()
     }
+
+    /// Add multiple songs to the playlist by looking them up
+    /// - Parameter songInfos: Array of tuples (isrc, songTitle, artistName)
+    /// - Returns: Number of songs successfully added
+    @Published var isAddingMultipleSongs: Bool = false
+    @Published var addMultipleSongsProgress: (current: Int, total: Int) = (0, 0)
+
+    @discardableResult
+    func addSongsToPlaylist(_ songInfos: [(isrc: String, songTitle: String?, artistName: String?)]) async -> Int {
+        guard !playlistCreationFailed else {
+            print("📋 Skipping playlist add - creation previously failed")
+            return 0
+        }
+
+        isAddingMultipleSongs = true
+        addMultipleSongsProgress = (0, songInfos.count)
+        defer { isAddingMultipleSongs = false }
+
+        var successCount = 0
+
+        do {
+            let playlist = try await getOrCreatePlaylist()
+
+            for (index, info) in songInfos.enumerated() {
+                addMultipleSongsProgress = (index + 1, songInfos.count)
+
+                // Skip if already added
+                if let song = try? await SongLookupService.findSong(
+                    isrc: info.isrc,
+                    songTitle: info.songTitle,
+                    artistName: info.artistName,
+                    includeDemoFallback: false
+                ) {
+                    let songIdString = song.id.rawValue
+                    if addedSongIds.contains(songIdString) {
+                        print("📋 Song already in playlist: \(song.title)")
+                        successCount += 1
+                        continue
+                    }
+
+                    do {
+                        try await addSongToPlaylist(song: song, playlist: playlist)
+                        addedSongIds.insert(songIdString)
+                        print("✅ Added to playlist: \(song.title)")
+                        successCount += 1
+                    } catch {
+                        print("⚠️ Failed to add song: \(error)")
+                    }
+                }
+            }
+        } catch {
+            print("⚠️ Failed to get/create playlist: \(error)")
+            let errorString = String(describing: error)
+            if errorString.contains("not entitled") || errorString.contains("PermissionDenied") ||
+               errorString.contains("not supported") {
+                playlistCreationFailed = true
+            }
+        }
+
+        print("✅ Added \(successCount)/\(songInfos.count) songs to playlist")
+        return successCount
+    }
+
 }

@@ -9,14 +9,14 @@ struct GameProgressView: View {
         VStack(spacing: 12) {
             HStack {
                 Text("Progress")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(.white.opacity(0.7))
 
                 Spacer()
 
                 Text("\(currentLink) / \(totalLinks)")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundColor(Color(red: 1.0, green: 0.84, blue: 0.0))
+                    .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.42))
             }
 
             GeometryReader { geometry in
@@ -29,8 +29,8 @@ struct GameProgressView: View {
                         .fill(
                             LinearGradient(
                                 colors: [
-                                    Color(red: 1.0, green: 0.84, blue: 0.0),
-                                    Color(red: 0.9, green: 0.75, blue: 0.0)
+                                    Color(red: 1.0, green: 0.42, blue: 0.42),
+                                    Color(red: 0.93, green: 0.35, blue: 0.35)
                                 ],
                                 startPoint: .leading,
                                 endPoint: .trailing

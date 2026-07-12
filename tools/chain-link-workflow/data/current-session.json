@@ -1,0 +1,261 @@
+{
+  "id": "e3e8728d-91d2-4394-bc18-52159567d822",
+  "createdAt": "2026-03-06T18:23:59.419Z",
+  "seed": {
+    "currentSongTitle": "Paper Sun",
+    "currentArtistName": "Traffic",
+    "themeNotes": "",
+    "avoidNotes": ""
+  },
+  "candidateLinks": [
+    {
+      "id": "a4182178-15c6-4293-8d2a-90ce02419901",
+      "rank": 1,
+      "connectionType": "name-change",
+      "nextArtistName": "Status Quo",
+      "nextSongTitle": "Rockin All Over the World",
+      "connectionFact": "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+      "whyThisWorks": "Entered manually by the reviewer.",
+      "verificationNote": "Manual entry. Verify wording before export.",
+      "confidence": "Manual",
+      "fallbackNotice": null
+    }
+  ],
+  "candidateGeneration": {
+    "mode": "manual_only",
+    "message": "No OPENAI_API_KEY detected. Candidate discovery is disabled to avoid fake historical connections. Enter a connection manually or configure OpenAI."
+  },
+  "selectedCandidate": {
+    "id": "a4182178-15c6-4293-8d2a-90ce02419901",
+    "rank": 1,
+    "connectionType": "name-change",
+    "nextArtistName": "Status Quo",
+    "nextSongTitle": "Rockin All Over the World",
+    "connectionFact": "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+    "whyThisWorks": "Entered manually by the reviewer.",
+    "verificationNote": "Manual entry. Verify wording before export.",
+    "confidence": "Manual",
+    "fallbackNotice": null
+  },
+  "fieldState": {
+    "clue": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": "",
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            "Classic route. The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. Which artist does that fact point to, and which act takes the chain into \"Rockin All Over the World\"?",
+            "Story-driven route. The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. Which artist does that fact point to, and which act takes the chain into \"Rockin All Over the World\"?",
+            "Fact-first route. The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. Which artist does that fact point to, and which act takes the chain into \"Rockin All Over the World\"?",
+            "Player-friendly route. The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. Which artist does that fact point to, and which act takes the chain into \"Rockin All Over the World\"?",
+            "Slightly trickier route. The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. Which artist does that fact point to, and which act takes the chain into \"Rockin All Over the World\"?"
+          ]
+        }
+      ]
+    },
+    "hint1": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": "",
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            "Focus on this fact: The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+            "Focus on this fact: The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+            "Focus on this fact: The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+            "Focus on this fact: The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+            "Focus on this fact: The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic."
+          ]
+        }
+      ]
+    },
+    "hint2": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": "",
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            "The fact connects Traffic to Status Quo, and the selected next song is \"Rockin All Over the World\".",
+            "The fact connects Traffic to Status Quo, and the selected next song is \"Rockin All Over the World\".",
+            "The fact connects Traffic to Status Quo, and the selected next song is \"Rockin All Over the World\".",
+            "The fact connects Traffic to Status Quo, and the selected next song is \"Rockin All Over the World\".",
+            "The fact connects Traffic to Status Quo, and the selected next song is \"Rockin All Over the World\"."
+          ]
+        }
+      ]
+    },
+    "multipleChoiceOptions": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            [
+              "Status Quo",
+              "Thin Lizzy",
+              "Wishbone Ash",
+              "ELO"
+            ],
+            [
+              "Status Quo",
+              "Wishbone Ash",
+              "ELO",
+              "T. Rex"
+            ],
+            [
+              "Status Quo",
+              "ELO",
+              "T. Rex",
+              "The Hollies"
+            ],
+            [
+              "Status Quo",
+              "T. Rex",
+              "The Hollies",
+              "The Kinks"
+            ],
+            [
+              "Status Quo",
+              "The Hollies",
+              "The Kinks",
+              "Roxy Music"
+            ]
+          ]
+        }
+      ]
+    },
+    "correctAnswers": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": [
+        ""
+      ],
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            [
+              "Status Quo",
+              "The band Status Quo",
+              "Status Quo band"
+            ],
+            [
+              "Status Quo",
+              "The band Status Quo",
+              "Status Quo band"
+            ],
+            [
+              "Status Quo",
+              "The band Status Quo",
+              "Status Quo band"
+            ],
+            [
+              "Status Quo",
+              "The band Status Quo",
+              "Status Quo band"
+            ],
+            [
+              "Status Quo",
+              "The band Status Quo",
+              "Status Quo band"
+            ]
+          ]
+        }
+      ]
+    },
+    "answerText": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": "",
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. That is why Status Quo is the right answer, and why \"Rockin All Over the World\" is the right musical landing point for the next step in the chain.",
+            "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. That is why Status Quo is the right answer, and why \"Rockin All Over the World\" is the right musical landing point for the next step in the chain.",
+            "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. That is why Status Quo is the right answer, and why \"Rockin All Over the World\" is the right musical landing point for the next step in the chain.",
+            "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. That is why Status Quo is the right answer, and why \"Rockin All Over the World\" is the right musical landing point for the next step in the chain.",
+            "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic. That is why Status Quo is the right answer, and why \"Rockin All Over the World\" is the right musical landing point for the next step in the chain."
+          ]
+        }
+      ]
+    },
+    "songStartInfo": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": "",
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            "Now \"Rockin All Over the World\" begins. The chain has moved from Traffic to Status Quo through this fact: a band name change.",
+            "Now \"Rockin All Over the World\" begins. The chain has moved from Traffic to Status Quo through this fact: an early identity swap.",
+            "Now \"Rockin All Over the World\" begins. The chain has moved from Traffic to Status Quo through this fact: a rebrand before fame.",
+            "Now \"Rockin All Over the World\" begins. The chain has moved from Traffic to Status Quo through this fact: a discarded original name.",
+            "Now \"Rockin All Over the World\" begins. The chain has moved from Traffic to Status Quo through this fact: a decision to avoid confusion."
+          ]
+        }
+      ]
+    },
+    "triviaItems": {
+      "mode": "ai",
+      "selected": null,
+      "manualValue": [
+        ""
+      ],
+      "batches": [
+        {
+          "createdAt": "2026-03-06T18:24:17.495Z",
+          "batchIndex": 0,
+          "options": [
+            [
+              "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+              "\"Rockin All Over the World\" gives this hop a clear musical landing point instead of ending with the artist alone.",
+              "Entered manually by the reviewer."
+            ],
+            [
+              "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+              "\"Rockin All Over the World\" gives this hop a clear musical landing point instead of ending with the artist alone.",
+              "Entered manually by the reviewer."
+            ],
+            [
+              "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+              "\"Rockin All Over the World\" gives this hop a clear musical landing point instead of ending with the artist alone.",
+              "Entered manually by the reviewer."
+            ],
+            [
+              "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+              "\"Rockin All Over the World\" gives this hop a clear musical landing point instead of ending with the artist alone.",
+              "Entered manually by the reviewer."
+            ],
+            [
+              "The band later known as Status Quo originally used the name Traffic Jam and changed it to avoid confusion with Traffic.",
+              "\"Rockin All Over the World\" gives this hop a clear musical landing point instead of ending with the artist alone.",
+              "Entered manually by the reviewer."
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "lastExport": null
+}

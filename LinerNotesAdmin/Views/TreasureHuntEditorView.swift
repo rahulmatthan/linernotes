@@ -37,9 +37,15 @@ struct TreasureHuntEditorView: View {
                             Text("•")
                                 .foregroundColor(.secondary)
 
-                            Label("In Manifest", systemImage: "checkmark.circle.fill")
-                                .font(.caption)
-                                .foregroundColor(.green)
+                            if viewModel.currentManifestEntry.isPublished {
+                                Label("Published", systemImage: "checkmark.circle.fill")
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            } else {
+                                Label("Draft", systemImage: "circle.dashed")
+                                    .font(.caption)
+                                    .foregroundColor(.orange)
+                            }
                         }
                     }
                 }
@@ -126,6 +132,7 @@ struct TreasureHuntEditorView: View {
                         Label("Info", systemImage: "info.circle")
                     }
                     .help("Edit treasure hunt metadata")
+
                 }
             }
             .padding(.horizontal, 16)

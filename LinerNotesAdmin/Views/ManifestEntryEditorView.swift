@@ -13,6 +13,7 @@ struct ManifestEntryEditorView: View {
     @State private var name: String = ""
     @State private var description: String = ""
     @State private var difficulty: String = ""
+    @State private var isPublished: Bool = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -76,6 +77,9 @@ struct ManifestEntryEditorView: View {
                             .frame(maxWidth: 300)
                     }
                     .help("Optional difficulty indicator")
+
+                    Toggle("Publish in app", isOn: $isPublished)
+                        .help("If enabled, this hunt will be included in the client app manifest.")
                 } header: {
                     Text("Manifest Details")
                 }
@@ -139,10 +143,12 @@ struct ManifestEntryEditorView: View {
             name = entry.name
             description = entry.description
             difficulty = entry.difficulty ?? ""
+            isPublished = entry.isPublished
         } else {
             // Default to hunt name
             entryId = huntName
             name = huntName
+            isPublished = false
         }
     }
 
@@ -152,7 +158,8 @@ struct ManifestEntryEditorView: View {
             name: name.trimmingCharacters(in: .whitespacesAndNewlines),
             description: description.trimmingCharacters(in: .whitespacesAndNewlines),
             difficulty: difficulty.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : difficulty.trimmingCharacters(in: .whitespacesAndNewlines),
-            songCount: linkCount
+            songCount: linkCount,
+            isPublished: isPublished
         )
     }
 }
@@ -171,7 +178,7 @@ struct ManifestManagerView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
 
-                    Text("\(manifest.hunts.count) hunt\(manifest.hunts.count == 1 ? "" : "s") in manifest")
+                    Text("\(manifest.publishedOnly.hunts.count) published of \(manifest.hunts.count) total")
                         .font(.callout)
                         .foregroundColor(.secondary)
                 }
@@ -233,8 +240,14 @@ struct ManifestManagerView: View {
 
                             Spacer()
 
+                            Toggle("Published", isOn: publishedBinding(for: entry.id))
+                                .toggleStyle(.switch)
+                                .labelsHidden()
+                                .help("Include this hunt in the client app manifest")
+
                             Button {
                                 manifest.remove(id: entry.id)
+                                persistManifest()
                             } label: {
                                 Image(systemName: "trash")
                                     .foregroundColor(.red)
@@ -248,6 +261,27 @@ struct ManifestManagerView: View {
             }
         }
         .frame(width: 600, height: 450)
+        .onDisappear {
+            persistManifest()
+        }
+    }
+
+    private func publishedBinding(for entryId: String) -> Binding<Bool> {
+        Binding(
+            get: {
+                manifest.hunts.first(where: { $0.id == entryId })?.isPublished ?? false
+            },
+            set: { newValue in
+                guard let idx = manifest.hunts.firstIndex(where: { $0.id == entryId }) else { return }
+                manifest.hunts[idx].isPublished = newValue
+                // Persist immediately so publishing selection is never lost.
+                persistManifest()
+            }
+        )
+    }
+
+    private func persistManifest() {
+        try? FileManager.saveManifest(manifest)
     }
 }
 
@@ -264,8 +298,8 @@ struct ManifestManagerView: View {
 #Preview("Manifest Manager") {
     ManifestManagerView(
         manifest: .constant(HuntManifest(hunts: [
-            HuntManifestEntry(id: "Version 1", name: "Classic Hits", description: "A journey through iconic songs", difficulty: "Medium", songCount: 20),
-            HuntManifestEntry(id: "80s Classics", name: "80s Classics", description: "The best of the 1980s", difficulty: nil, songCount: 15)
+            HuntManifestEntry(id: "Version 1", name: "Classic Hits", description: "A journey through iconic songs", difficulty: "Medium", songCount: 20, isPublished: true),
+            HuntManifestEntry(id: "80s Classics", name: "80s Classics", description: "The best of the 1980s", difficulty: nil, songCount: 15, isPublished: false)
         ]))
     )
 }

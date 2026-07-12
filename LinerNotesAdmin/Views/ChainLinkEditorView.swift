@@ -6,6 +6,8 @@ struct ChainLinkEditorView: View {
     @State private var newArtist: String = ""
     @State private var showingMusicSearch = false
     @State private var previewMode: PreviewMode = .clue
+    @State private var isValidatingSong = false
+    @State private var songValidationResult: SongValidationResult?
 
     private enum PreviewMode: String, CaseIterable, Identifiable {
         case clue = "Clue"
@@ -298,6 +300,41 @@ struct ChainLinkEditorView: View {
                         Label("Search Music", systemImage: "magnifyingglass")
                     }
                     .buttonStyle(.borderedProminent)
+
+                    HStack(spacing: 10) {
+                        Button {
+                            Task {
+                                await validateSongID()
+                            }
+                        } label: {
+                            if isValidatingSong {
+                                HStack(spacing: 6) {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                    Text("Validating...")
+                                }
+                            } else {
+                                Label("Validate Song ID", systemImage: "checkmark.shield")
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(isValidatingSong)
+
+                        if let result = songValidationResult {
+                            Label(
+                                result.isValid ? "Valid" : "Needs Attention",
+                                systemImage: result.isValid ? "checkmark.circle.fill" : "exclamationmark.triangle.fill"
+                            )
+                            .font(.caption)
+                            .foregroundColor(result.isValid ? .green : .orange)
+                        }
+                    }
+
+                    if let result = songValidationResult {
+                        Text(result.message)
+                            .font(.caption)
+                            .foregroundColor(result.isValid ? .green : .orange)
+                    }
 
                     if editedLink.isrc.isEmpty {
                         Text("ISRC is required")
@@ -708,6 +745,18 @@ struct ChainLinkEditorView: View {
         }
         editedLink.correctAnswers.append(trimmed)
         newArtist = ""
+    }
+
+    @MainActor
+    private func validateSongID() async {
+        isValidatingSong = true
+        defer { isValidatingSong = false }
+
+        songValidationResult = await MusicKitService.shared.validateSongIdentifier(
+            isrc: editedLink.isrc,
+            songTitle: editedLink.songTitle,
+            artistName: editedLink.artistName
+        )
     }
 
     private func splitIntoSentences(_ text: String) -> [String] {

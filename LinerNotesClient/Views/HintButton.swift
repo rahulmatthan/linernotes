@@ -1,72 +1,71 @@
 import SwiftUI
 
+/// Passive countdown display showing when hints will appear automatically
 struct HintButton: View {
-    let isEnabled: Bool
-    let secondsRemaining: Int
+    let secondsUntilHint: Int
     let hintLevel: HintLevel
-    let hardMode: Bool
-    let onTap: () -> Void
 
-    private var buttonText: String {
+    // Design constants
+    private let accentColor = Color(red: 1.0, green: 0.42, blue: 0.42)
+    private let secondaryText = Color.white.opacity(0.5)
+
+    private var displayText: String {
         switch hintLevel {
         case .none:
-            return "Hint"
+            if secondsUntilHint > 0 {
+                return "Hint in \(secondsUntilHint)s"
+            } else {
+                return "Hint soon..."
+            }
         case .hint1:
-            return hardMode ? "All Hints Used" : "Show Options"
+            return "Hint shown"
         case .hint2, .multipleChoice:
-            return "All Hints Used"
+            return "Options shown"
         }
     }
 
-    private var isFullyUsed: Bool {
-        hintLevel == .multipleChoice || (hardMode && hintLevel == .hint1)
-    }
-
-    private var buttonIcon: String {
+    private var icon: String {
         switch hintLevel {
-        case .none, .hint1, .hint2:
+        case .none:
+            return "clock"
+        case .hint1:
             return "lightbulb.fill"
-        case .multipleChoice:
-            return "checkmark.circle"
+        case .hint2, .multipleChoice:
+            return "checkmark"
         }
     }
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 8) {
-                Image(systemName: buttonIcon)
-                    .font(.system(size: 16, weight: .semibold))
-                Text(buttonText)
-                    .font(.system(size: 14, weight: .semibold))
-            }
-            .foregroundColor(isEnabled && !isFullyUsed ? .black : .white.opacity(0.5))
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                Capsule()
-                    .fill(isEnabled && !isFullyUsed
-                          ? Color(red: 1.0, green: 0.84, blue: 0.0)
-                          : Color.white.opacity(0.15))
-            )
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+            Text(displayText)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
         }
-        .disabled(!isEnabled || isFullyUsed)
-        .animation(.easeInOut(duration: 0.3), value: isEnabled)
-        .animation(.easeInOut(duration: 0.3), value: hintLevel)
-        .animation(.easeInOut(duration: 0.3), value: hardMode)
+        .foregroundColor(hintLevel == .none ? secondaryText : accentColor.opacity(0.8))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(
+            Capsule()
+                .fill(Color.white.opacity(0.08))
+        )
+        .animation(.easeOut(duration: 0.2), value: hintLevel)
+        .animation(.easeOut(duration: 0.2), value: secondsUntilHint)
     }
 }
 
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        VStack(spacing: 20) {
-            Text("Normal Mode").foregroundColor(.white)
-            HintButton(isEnabled: false, secondsRemaining: 45, hintLevel: .none, hardMode: false, onTap: {})
-            HintButton(isEnabled: true, secondsRemaining: 0, hintLevel: .none, hardMode: false, onTap: {})
-            HintButton(isEnabled: true, secondsRemaining: 0, hintLevel: .hint1, hardMode: false, onTap: {})
+        VStack(spacing: 16) {
+            Text("Automatic Hints")
+                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .foregroundColor(.white.opacity(0.5))
 
-            Text("Hard Mode").foregroundColor(.white).padding(.top)
-            HintButton(isEnabled: true, secondsRemaining: 0, hintLevel: .hint1, hardMode: true, onTap: {})
+            HintButton(secondsUntilHint: 12, hintLevel: HintLevel.none)
+            HintButton(secondsUntilHint: 5, hintLevel: HintLevel.none)
+            HintButton(secondsUntilHint: 0, hintLevel: HintLevel.hint1)
+            HintButton(secondsUntilHint: 0, hintLevel: HintLevel.multipleChoice)
         }
     }
 }

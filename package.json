@@ -1,0 +1,7 @@
+{
+  "name": "linernotes-tools",
+  "private": true,
+  "scripts": {
+    "chain-link-workflow": "node tools/chain-link-workflow/server.js"
+  }
+}

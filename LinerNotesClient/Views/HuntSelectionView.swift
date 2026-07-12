@@ -2,15 +2,20 @@ import SwiftUI
 
 // MARK: - Design Constants (matching GameView)
 private enum Design {
+    enum Mode {
+        static let useRefinedTheme = true
+    }
+
+    // Typography scale - SF Pro Rounded
     enum Font {
-        static let caption = SwiftUI.Font.system(size: 13)
-        static let captionMedium = SwiftUI.Font.system(size: 13, weight: .medium)
-        static let body = SwiftUI.Font.system(size: 16)
-        static let bodyMedium = SwiftUI.Font.system(size: 16, weight: .medium)
-        static let title3 = SwiftUI.Font.system(size: 18)
-        static let title3Medium = SwiftUI.Font.system(size: 18, weight: .medium)
-        static let title2 = SwiftUI.Font.system(size: 20, weight: .semibold)
-        static let title1 = SwiftUI.Font.system(size: 24, weight: .bold)
+        static let caption = SwiftUI.Font.system(size: 13, weight: .regular, design: .rounded)
+        static let captionMedium = SwiftUI.Font.system(size: 13, weight: .medium, design: .rounded)
+        static let body = SwiftUI.Font.system(size: 17, weight: .regular, design: .default)
+        static let bodyMedium = SwiftUI.Font.system(size: 17, weight: .medium, design: .default)
+        static let title3 = SwiftUI.Font.system(size: 19, weight: .regular, design: .default)
+        static let title3Medium = SwiftUI.Font.system(size: 20, weight: .semibold, design: .serif)
+        static let title2 = SwiftUI.Font.system(size: 22, weight: .semibold, design: .serif)
+        static let title1 = SwiftUI.Font.system(size: 30, weight: .bold, design: .serif)
     }
 
     enum Spacing {
@@ -24,13 +29,15 @@ private enum Design {
     }
 
     enum Colors {
-        static let accent = Color(red: 1.0, green: 0.84, blue: 0.0)
-        static let cardBackground = Color.black.opacity(0.8)
-        static let secondaryText = Color.white.opacity(0.7)
-        static let tertiaryText = Color.white.opacity(0.5)
-        static let border = Color.white.opacity(0.2)
+        static let accent = Mode.useRefinedTheme
+            ? Color(red: 0.94, green: 0.67, blue: 0.32)
+            : Color(red: 1.0, green: 0.42, blue: 0.42)
+        static let cardBackground = Mode.useRefinedTheme ? Color.black.opacity(0.62) : Color.black.opacity(0.8)
+        static let secondaryText = Mode.useRefinedTheme ? Color.white.opacity(0.82) : Color.white.opacity(0.7)
+        static let tertiaryText = Mode.useRefinedTheme ? Color.white.opacity(0.62) : Color.white.opacity(0.5)
+        static let border = Mode.useRefinedTheme ? Color.white.opacity(0.14) : Color.white.opacity(0.2)
         static let inProgress = Color.orange
-        static let completed = Color.green
+        static let completed = Color(red: 0.41, green: 0.94, blue: 0.68)
     }
 
     enum Radius {
@@ -55,9 +62,22 @@ struct HuntSelectionView: View {
     @State private var pendingProgress: SavedProgress?
     @State private var pendingHuntId: String?
 
+    private var brandMark: some View {
+        Image("BrandRecord")
+            .resizable()
+            .scaledToFill()
+            .frame(width: 44, height: 44)
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.35), radius: 6, y: 3)
+    }
+
     var body: some View {
         ZStack {
-            backgroundGradient
+            VinylGrooveBackground()
 
             VStack(spacing: Design.Spacing.xxl) {
                 header
@@ -112,19 +132,6 @@ struct HuntSelectionView: View {
         }
     }
 
-    // MARK: - Background
-
-    private var backgroundGradient: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.05, green: 0.05, blue: 0.1),
-                Color(red: 0.1, green: 0.05, blue: 0.15)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-        .ignoresSafeArea()
-    }
 
     // MARK: - Header
 
@@ -135,7 +142,7 @@ struct HuntSelectionView: View {
                     onClose()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 17, weight: .medium))
+                        .font(.system(size: 17, weight: .medium, design: .rounded))
                         .foregroundColor(.white)
                         .frame(width: 36, height: 36)
                         .background(Color.white.opacity(0.15))
@@ -147,9 +154,13 @@ struct HuntSelectionView: View {
             .padding(.horizontal, Design.Spacing.xl)
 
             VStack(spacing: Design.Spacing.sm) {
-                Image(systemName: "music.note.list")
-                    .font(.system(size: 40))
-                    .foregroundColor(Design.Colors.accent)
+                if Design.Mode.useRefinedTheme {
+                    brandMark
+                } else {
+                    Image(systemName: "music.note.list")
+                        .font(.system(size: 40, weight: .regular, design: .rounded))
+                        .foregroundColor(Design.Colors.accent)
+                }
 
                 Text("Choose Your Hunt")
                     .font(Design.Font.title1)
@@ -189,7 +200,7 @@ struct HuntSelectionView: View {
     private func errorView(message: String) -> some View {
         VStack(spacing: Design.Spacing.lg) {
             Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 40))
+                .font(.system(size: 40, weight: .regular, design: .rounded))
                 .foregroundColor(Design.Colors.accent)
 
             Text("Unable to Load Hunts")
@@ -340,17 +351,28 @@ struct HuntCard: View {
             switch status {
             case .notStarted:
                 Image(systemName: "circle")
-                    .font(.system(size: 20))
+                    .font(.system(size: 20, weight: .regular, design: .rounded))
                     .foregroundColor(Design.Colors.tertiaryText)
 
-            case .inProgress:
-                Image(systemName: "circle.lefthalf.filled")
-                    .font(.system(size: 20))
-                    .foregroundColor(Design.Colors.inProgress)
+            case .inProgress(let progress):
+                ZStack {
+                    Circle()
+                        .stroke(Design.Colors.inProgress.opacity(0.3), lineWidth: 2.2)
+                        .frame(width: 20, height: 20)
+
+                    Circle()
+                        .trim(from: 0, to: min(max(progress, 0), 1))
+                        .stroke(
+                            Design.Colors.inProgress,
+                            style: StrokeStyle(lineWidth: 2.2, lineCap: .butt)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .frame(width: 20, height: 20)
+                }
 
             case .completed:
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 20))
+                    .font(.system(size: 20, weight: .regular, design: .rounded))
                     .foregroundColor(Design.Colors.completed)
             }
         }
